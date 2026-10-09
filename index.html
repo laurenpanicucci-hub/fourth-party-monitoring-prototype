@@ -1,0 +1,1572 @@
+<meta charset="utf-8">
+<title>Third Party Risk Agent</title>
+<style>
+:root{
+ --n0:#fff;--n50:hsl(0 0% 97%);--n100:hsl(0 0% 93%);--n200:hsl(0 0% 90%);--n300:hsl(0 0% 84%);
+ --n400:hsl(0 0% 66%);--n500:hsl(0 0% 46%);--n600:hsl(0 0% 37%);--n700:hsl(0 0% 29%);
+ --n800:hsl(0 0% 18%);--n900:hsl(0 0% 10%);
+ --r-md:4px;--r-lg:6px;--r-xl:12px;--sh:0 1px 2px 0 rgb(0 0 0/.05);
+ --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--n50);color:var(--n900);font-family:var(--sans);font-size:14px;line-height:1.5;
+ -webkit-font-smoothing:antialiased;font-feature-settings:'cv11','ss01';overflow:hidden}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit}
+.app{display:flex;flex-direction:column;height:100vh}
+.row{display:flex;flex:1;min-height:0}
+/* banner */
+.banner{display:none;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--n900);
+ background:var(--n900);color:#fff;font-size:13px}
+.banner.on{display:flex}
+.banner .ic{width:16px;height:16px;border-radius:99px;border:1.5px solid #fff;display:inline-flex;align-items:center;
+ justify-content:center;font-size:10px;font-weight:700;flex:0 0 auto}
+.banner a{color:#fff;font-weight:600;text-decoration:none;cursor:pointer;margin-left:2px;display:inline-flex;align-items:center;gap:4px}
+.banner a .arr{transition:transform .12s;display:inline-block}
+.banner a:hover .arr{transform:translateX(3px)}
+/* sidebar */
+.sb{width:16rem;flex:0 0 auto;background:var(--n50);border-right:1px solid var(--n200);display:flex;flex-direction:column}
+.sbh{padding:16px;display:flex;align-items:center;gap:8px}
+.logo{width:32px;height:32px;border-radius:8px;border:1px solid var(--n300);background:#fff;position:relative;flex:0 0 auto}
+.logo:before,.logo:after,.ximg:before,.ximg:after{content:"";position:absolute;left:50%;top:50%;width:70%;height:1px;
+ background:var(--n300);transform:translate(-50%,-50%) rotate(45deg)}
+.logo:after,.ximg:after{transform:translate(-50%,-50%) rotate(-45deg)}
+.sbh p{margin:0}
+.sbh .t{font-size:13.5px;font-weight:600;line-height:1.2}
+.sbh .s{font-size:10px;color:var(--n500);font-weight:500}
+.sbg{padding:0 8px}
+.sbl{font-size:11px;color:var(--n500);padding:10px 8px 6px;font-weight:500}
+.nav{display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;border-radius:var(--r-md);font-size:13.5px;
+ color:var(--n800);text-align:left}
+.nav:hover{background:var(--n100)}
+.nav.on{background:var(--n200);font-weight:500;color:var(--n900)}
+.nav svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.sbf{margin-top:auto;padding:12px;display:flex;gap:10px;align-items:center}
+.av{width:32px;height:32px;border-radius:99px;background:var(--n200);display:flex;align-items:center;justify-content:center;
+ font-size:11px;font-weight:600;color:var(--n700)}
+.sbf p{margin:0;font-size:13px;font-weight:500;line-height:1.25}
+.sbf .e{font-size:11.5px;color:var(--n500);font-weight:400}
+/* main */
+main{flex:1;min-width:0;overflow:auto;padding:24px}
+.page{max-width:1600px;margin:0 auto}
+.page.narrow{max-width:56rem}
+h1{margin:0;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.sub{margin:4px 0 0;font-size:13.5px;color:var(--n500)}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:16px}
+.srch{position:relative;width:288px}
+.srch input{width:100%;height:32px;border:1px solid var(--n200);border-radius:var(--r-lg);background:#fff;padding:0 10px 0 30px;
+ font-size:12px;font-family:inherit;color:var(--n900)}
+.srch input:focus{outline:none;border-color:var(--n500)}
+.srch svg{position:absolute;left:10px;top:9px;width:14px;height:14px;stroke:var(--n500);fill:none;stroke-width:2}
+.fb{height:32px;border:1px solid var(--n200);border-radius:var(--r-lg);background:#fff;display:inline-flex;align-items:center;
+ gap:8px;padding:0 12px;font-size:12px;color:var(--n500)}
+.fb.on{border-color:var(--n900);color:var(--n900);background:var(--n100)}
+.seg{display:inline-flex;height:32px;border:1px solid var(--n200);border-radius:var(--r-lg);background:#fff;overflow:hidden}
+.seg button{padding:0 12px;font-size:12px;color:var(--n500);border-right:1px solid var(--n200)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--n900);color:#fff}
+.btn{height:32px;border-radius:var(--r-lg);padding:0 12px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;
+ gap:6px;background:var(--n900);color:#fff;border:1px solid var(--n900);white-space:nowrap}
+.btn.o{background:#fff;color:var(--n900);border-color:var(--n300)}
+.btn.o:hover{background:var(--n100)}
+.btn.sm{height:28px;padding:0 10px;font-size:12px}
+.btn.lg{height:36px;padding:0 16px;font-size:14px;gap:8px}
+.btn.lg svg{width:16px;height:16px}
+.btn.ghost{background:none;border-color:transparent;color:var(--n500);padding:0 8px}
+.btn.ghost:hover{color:var(--n900);background:var(--n100)}
+.card{background:#fff;border:1px solid var(--n200);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;font-weight:500;color:var(--n500);padding:10px 16px;background:hsl(0 0% 96%);
+ border-bottom:1px solid var(--n200);white-space:nowrap}
+td{padding:8px 16px;border-bottom:1px solid var(--n200);font-size:13px;vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr.act{cursor:pointer}
+tbody tr.act:hover{background:hsl(0 0% 96%)}
+.vn{display:flex;align-items:center;gap:8px;min-width:160px;font-weight:500}
+.ximg{width:32px;height:32px;border-radius:999px;border:1px solid var(--n300);background:var(--n100);position:relative;flex:0 0 auto}
+.ximg.lg{width:64px;height:64px}
+.ximg.sm{width:24px;height:24px}
+.ximg:before,.ximg:after{display:none}
+.dot{display:inline-flex;align-items:center;gap:8px;font-size:12px}
+.dot i{width:8px;height:8px;border-radius:99px;background:var(--n800);display:inline-block}
+.dot i.off{background:var(--n300)}
+.badge{display:inline-flex;align-items:center;border:1px solid var(--n300);border-radius:99px;padding:1px 9px;font-size:12px;
+ font-weight:500;background:#fff;white-space:nowrap;line-height:1.5}
+.badge.sec{background:var(--n100);border-color:var(--n100);color:var(--n500);font-weight:400}
+.badge.solid{background:var(--n900);border-color:var(--n900);color:#fff}
+.badge.hi{border-color:var(--n900)}
+.badge.lo{color:var(--n500);border-color:var(--n300);border-style:dashed}
+.badge.xs{font-size:11px;padding:0 7px}
+.mut{color:var(--n500)}.dim{color:var(--n400)}.xs{font-size:12px}.nw{white-space:nowrap}.right{text-align:right}
+.chv{color:var(--n400);font-size:16px;line-height:1}
+/* vendor detail */
+.back{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 8px;margin:-12px 0 0 -8px;border-radius:var(--r-lg);
+ color:var(--n500);font-size:13px}
+.back:hover{background:var(--n100);color:var(--n900)}
+.prof{display:flex;align-items:flex-start;gap:20px;padding:24px}
+.prof h1{font-size:30px;letter-spacing:-.02em}
+.prof .line{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.prof .meta{margin:4px 0 0;font-size:13.5px;color:var(--n500)}
+.prof .use{margin:8px 0 0;max-width:65ch;font-size:13.5px;line-height:1.6}
+.glance{display:flex;gap:40px;padding:12px 24px;border-top:1px solid var(--n200);background:hsl(0 0% 98%)}
+.gl b{display:block;font-size:18px;font-weight:600;line-height:1.2}
+.gl span{font-size:12px;color:var(--n500)}
+.mon{margin-top:12px;display:flex;align-items:flex-start;gap:10px;padding:10px 14px;font-size:12.5px;color:var(--n500);
+ border:1px solid var(--n200);border-radius:var(--r-lg);background:#fff}
+.mon .pulse{width:8px;height:8px;border-radius:99px;background:var(--n700);margin-top:6px;flex:0 0 auto}
+.mon b{color:var(--n700);font-weight:500}
+.tabs{display:inline-flex;height:40px;align-items:center;border-radius:var(--r-lg);background:var(--n100);padding:4px;margin:24px 0 8px}
+.tabs button{height:32px;padding:0 12px;border-radius:var(--r-md);font-size:13.5px;font-weight:500;color:var(--n500);
+ display:inline-flex;align-items:center;gap:6px}
+.tabs button.on{background:#fff;color:var(--n900);box-shadow:var(--sh)}
+.tabs .c{font-size:11.5px;color:var(--n500);font-weight:400}
+.secttl{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 10px}
+.secttl h2{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.flow{display:inline-flex;align-items:center;gap:6px;font-size:12px}
+.flow i{width:8px;height:8px;border-radius:99px;background:var(--n900);display:inline-block}
+.flow.no{color:var(--n500)}
+.flow.no i{background:none;border:1.5px dashed var(--n400)}
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgb(0 0 0/.6);display:none;z-index:50}
+.scrim.on{display:block}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:75vw;background:#fff;border-left:1px solid var(--n200);
+ box-shadow:-8px 0 30px rgb(0 0 0/.12);z-index:60;transform:translateX(100%);transition:transform .25s ease;padding:24px;overflow:auto}
+.sheet.on{transform:none}
+.sheet h2{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+.sheet .x{position:absolute;right:16px;top:14px;width:28px;height:28px;border-radius:var(--r-md);color:var(--n500);font-size:18px}
+.sheet .x:hover{background:var(--n100)}
+.kv{margin-top:18px}
+.kv dt{font-size:11.5px;color:var(--n500);font-weight:500;margin-bottom:4px}
+.kv dd{margin:0 0 16px;font-size:13.5px}
+.kv ul{margin:0;padding-left:0;list-style:none}
+.kv li{padding:6px 0;border-bottom:1px solid var(--n200);font-size:13.5px;display:flex;justify-content:space-between;gap:10px}
+.kv li:last-child{border-bottom:0}
+.kv li span{color:var(--n500);font-size:12px}
+.note{font-size:12.5px;color:var(--n500);border-left:2px solid var(--n300);padding-left:10px;margin-top:6px}
+/* monitoring */
+.views{display:flex;gap:20px;border-bottom:1px solid var(--n200);margin:18px 0 14px}
+.views button{padding:0 2px 10px;font-size:13.5px;color:var(--n500);border-bottom:2px solid transparent;margin-bottom:-1px}
+.views button.on{color:var(--n900);border-color:var(--n900);font-weight:500}
+.views .c{font-size:11.5px;color:var(--n500);margin-left:4px}
+.thr{display:flex;gap:14px;padding:13px 16px;border-bottom:1px solid var(--n200);cursor:pointer}
+.thr:last-child{border-bottom:0}
+.thr:hover{background:hsl(0 0% 97%)}
+.thr .d{flex:0 0 76px;font-size:12.5px;color:var(--n500);padding-top:1px;white-space:nowrap}
+.thr .b{flex:1;min-width:0}
+.thr .s{font-weight:600;font-size:13.5px}
+.thr .m{margin-top:3px;font-size:12.5px;color:var(--n500);display:flex;flex-wrap:wrap;gap:0 6px}
+.thr .m span:not(:last-child):after{content:"·";margin-left:6px;color:var(--n400)}
+.thr .why{margin-top:6px;font-size:13px;color:var(--n700);max-width:100ch}
+.thr .t{flex:0 0 auto;align-self:flex-start;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.emptyq{padding:40px 20px;text-align:center;color:var(--n500);font-size:13px}
+.foot{margin-top:14px;font-size:11.5px;color:var(--n400)}
+/* incident detail */
+.chain{display:flex;align-items:center;gap:8px;font-size:13px;flex-wrap:wrap}
+.chain .n{border:1px solid var(--n300);border-radius:var(--r-lg);padding:4px 10px;background:#fff;font-weight:500}
+.chain .n.you{background:var(--n900);color:#fff;border-color:var(--n900)}
+.chain .a{color:var(--n400)}
+.stepper{display:inline-flex;border:1px solid var(--n200);border-radius:var(--r-lg);background:#fff;overflow:hidden;margin:18px 0 16px}
+.stepper button{padding:8px 16px;font-size:13px;color:var(--n500);border-right:1px solid var(--n200);text-align:left;line-height:1.3}
+.stepper button:last-child{border-right:0}
+.stepper button b{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--n400);font-weight:600}
+.stepper button.on{background:var(--n900);color:#fff}
+.stepper button.on b{color:var(--n300)}
+.msg{padding:20px 22px;border-bottom:1px solid var(--n200)}
+.msg:last-child{border-bottom:0}
+.msg .mh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+.msg .mh b{font-size:14px;font-weight:600}
+.msg .src{font-size:12.5px;color:var(--n500);font-style:italic}
+.msg blockquote{margin:12px 0;padding:12px 16px;border-left:3px solid var(--n300);background:hsl(0 0% 98%);font-size:13.5px;line-height:1.6}
+.msg .fic{font-size:12px;color:var(--n400);font-style:italic;margin:-6px 0 12px}
+.msg h4{margin:16px 0 4px;font-size:13px;font-weight:600}
+.msg p{margin:0 0 6px;font-size:13.5px;line-height:1.6;max-width:80ch}
+.msg .path{font-size:13px;color:var(--n700);font-weight:500}
+/* map */
+.mapcard{position:relative;overflow:visible}
+svg.map{display:block;width:100%;height:auto;max-height:calc(100vh - 200px);margin:0 auto;user-select:none}
+.map text{font-family:var(--sans);fill:var(--n700);font-size:11px}
+.map .vnode{cursor:pointer}
+.map .vnode circle{fill:#fff;stroke:var(--n600);stroke-width:1.2}
+.map .vnode:hover circle{stroke:var(--n900);stroke-width:2}
+.map .vnode.open circle{fill:var(--n900);stroke:var(--n900)}
+.map .vnode.shares circle{stroke-dasharray:2 2}
+.map .vnode.open text{fill:var(--n900);font-weight:600}
+.map .spoke{stroke:var(--n300);stroke-width:1}
+.map .spoke.open{stroke:var(--n900);stroke-width:1.5}
+.map .fp circle{fill:#fff;stroke:var(--n500);stroke-width:1}
+.map .fp.data circle{fill:var(--n700);stroke:var(--n700)}
+.map .fp text{font-size:10.5px}
+.map .fl{stroke:var(--n500);stroke-width:1}
+.map .fl.no{stroke-dasharray:3 3;stroke:var(--n400)}
+.map .share{stroke:var(--n400);stroke-width:1;stroke-dasharray:2 3}
+.map .share.hov{display:none}
+.map .share.lit{display:block;stroke:var(--n800);stroke-width:1.2}
+.map .fp:hover circle{stroke:var(--n900);stroke-width:2}
+.map .hub circle{fill:var(--n900)}
+.map .hub text{fill:#fff;font-weight:600;font-size:12px}
+.legend{width:230px;flex:0 0 auto;font-size:12.5px;color:var(--n600)}
+.legend .li{display:flex;gap:8px;align-items:center;padding:6px 0}
+.legend i{width:10px;height:10px;border-radius:99px;display:inline-block;border:1px solid var(--n600);background:#fff}
+.legend i.f{background:var(--n700);border-color:var(--n700)}
+.legend i.d{border-style:dashed;border-color:var(--n400)}
+.legend hr{border:0;border-top:1px solid var(--n200);margin:8px 0}
+.thr .ln{margin-top:5px;font-size:12.5px;color:var(--n700);display:flex;gap:6px;flex-wrap:wrap;line-height:1.45}
+.thr .ln b{color:var(--n500);font-weight:500;flex:0 0 190px}
+.thr .ln .pth{color:var(--n900);font-weight:500}
+.sheet.wide{width:640px}
+.sheet .stepper{margin:14px 0 12px}
+.sheet .msg{padding:16px 0;border-bottom:1px solid var(--n200)}
+.sheet .msg:last-child{border-bottom:0}
+.thr{flex-direction:column;gap:0;padding:16px 18px}
+.thr .top{display:flex;gap:14px;align-items:flex-start}
+.thr .top .b{flex:1}
+.chainv{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 10px 90px}
+.node{display:inline-flex;flex-direction:column;border:1px solid var(--n300);border-radius:var(--r-lg);padding:5px 11px;background:#fff;min-width:120px}
+.node .nm{font-weight:600;font-size:12.5px;line-height:1.3}
+.node .rl{font-size:11px;color:var(--n500);line-height:1.3}
+.node.you{background:var(--n100);border-color:var(--n200)}
+.node.hit{border:1.5px solid var(--n900)}
+.node.off{border-style:dashed;color:var(--n500)}
+.node.off .nm{color:var(--n600)}
+.arr{display:inline-flex;align-items:center;color:var(--n500)}
+.arr svg{width:34px;height:12px;stroke:currentColor;fill:none;stroke-width:1.5}
+.arr.off{color:var(--n400)}
+.arr.off svg{stroke-dasharray:3 3}
+.arr .lbl{font-size:10.5px;color:var(--n400);margin-left:4px}
+.nocon{font-size:12px;color:var(--n500);display:inline-flex;align-items:center;gap:8px}
+.nocon i{width:28px;border-top:1px dashed var(--n300);display:inline-block}
+.thr .body{margin:0 0 0 90px;font-size:13.5px;line-height:1.55;color:var(--n800);max-width:96ch}
+.thr .srcline{margin-top:10px;display:flex;justify-content:flex-end}
+.thr .srcline span{font-size:11.5px;color:var(--n500);border:1px solid var(--n200);border-radius:var(--r-md);padding:2px 8px;background:hsl(0 0% 98%);display:inline-flex;gap:6px;align-items:center}
+.thr .srcline svg{width:11px;height:11px;stroke:var(--n500);fill:none;stroke-width:1.8}
+
+/* B5 rail: one continuous arrow, identical stops, last stop filled */
+.thr .two{display:flex;gap:28px;margin:12px 0 0 90px;align-items:flex-start}
+.rail{flex:0 0 250px;padding-left:20px}
+.rail .st{position:relative;padding-bottom:14px}
+.rail .st:last-child{padding-bottom:0}
+.rail .st:before{content:"";position:absolute;left:-19px;top:5px;width:9px;height:9px;border-radius:99px;border:1.5px solid var(--n900);background:#fff;z-index:1}
+.rail .st:not(:last-child):after{content:"";position:absolute;left:-14px;top:15px;bottom:-6px;width:1px;background:var(--n900)}
+.rail .st:nth-last-child(2):after{bottom:0}
+.rail .st:nth-last-child(2) .n:after{content:"";position:absolute;left:-17.5px;bottom:-4px;border:4px solid transparent;border-top:7px solid var(--n900);border-bottom:0}
+.rail .st:last-child:before{background:var(--n900)}
+.rail .st.off:before{background:#fff;border-style:dashed;border-color:var(--n500)}
+.rail .st.off .n{color:var(--n600)}
+.rail .st:nth-last-child(2).todash:after{background:none;border-left:1px dashed var(--n500)}
+.rail .st:nth-last-child(2).todash .n:after{border-top-color:var(--n500)}
+.rail .n{font-weight:600;font-size:13px;line-height:1.3}
+.rail .st:last-child .n{font-weight:700}
+.rail .r{font-size:11.5px;color:var(--n500);line-height:1.35}
+.thr .two .body{margin:0}
+
+/* TEMP layout switcher + L1..L5 row structures (delete before sessions if not needed) */
+.lsw{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:11.5px;color:var(--n500)}
+.lsw .seg button{padding:0 10px}
+.thr.L{display:block;padding:0}
+.thr.L .in{padding:16px 18px}
+.thr.L .sub{font-weight:600;font-size:14px;line-height:1.35}
+.thr.L .meta{font-size:12px;color:var(--n500);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.thr.L .meta span+span:before{content:"\00b7";margin-right:6px;color:var(--n400)}
+.thr.L .p{margin:0;font-size:13.5px;line-height:1.55;max-width:72ch;color:var(--n800)}
+.thr.L .rail{flex:none}
+.thr.L .srcl{font-size:11.5px;color:var(--n500);border:1px solid var(--n200);border-radius:var(--r-md);padding:2px 8px;background:hsl(0 0% 98%);display:inline-flex;gap:6px;align-items:center}
+.thr.L .srcl svg{width:11px;height:11px;stroke:var(--n500);fill:none;stroke-width:1.8}
+.thr.L .tg{font-size:11px;border-radius:999px;padding:0 7px;background:var(--n100);color:var(--n500);white-space:nowrap}
+.thr.L .date{font-size:12.5px;color:var(--n500);font-variant-numeric:tabular-nums}
+.thr.L1 .in{display:grid;grid-template-columns:250px 1fr;gap:28px}
+.thr.L1 .date{margin-bottom:14px}
+.thr.L1 .meta{margin:6px 0 12px}
+.thr.L1 .foot{display:flex;justify-content:flex-end;margin-top:12px}
+.thr.L2 .head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.thr.L2 .rail{margin:14px 0 14px 2px}
+.thr.L2 .foot{display:flex;justify-content:flex-end;margin-top:12px}
+.thr.L3 .in{display:grid;grid-template-columns:76px 1fr;gap:14px}
+.thr.L3 .date{padding-top:2px}
+.thr.L3 .rail{margin:14px 0 14px 2px}
+.thr.L3 .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;padding-top:10px;border-top:1px solid var(--n200);flex-wrap:wrap}
+.thr.L4 .in{display:grid;grid-template-columns:1fr 260px;gap:32px}
+.thr.L4 .aside{border-left:1px solid var(--n200);padding-left:24px}
+.thr.L4 .aside .cap{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--n400);font-weight:600;margin:0 0 10px}
+.thr.L4 .foot{display:flex;justify-content:flex-end;margin-top:14px}
+.thr.L5 .band{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 18px;background:hsl(0 0% 96%);border-bottom:1px solid var(--n200)}
+.thr.L5 .band .sub{font-size:13.5px}
+.thr.L5 .in{display:grid;grid-template-columns:250px 1fr;gap:28px}
+.thr.L5 .foot{padding:8px 18px;border-top:1px solid var(--n200);display:flex;justify-content:flex-end}
+
+/* L6: header band, title row, two columns sharing one top edge, footer */
+.thr.L6 .band{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 22px;background:hsl(0 0% 96%);border-bottom:1px solid var(--n200);font-size:12.5px;color:var(--n600)}
+.thr.L6 .band b{font-weight:600;color:var(--n800)}
+.thr.L6 .in{padding:20px 22px 18px}
+.thr.L6 .ttl{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.thr.L6 .ttl .sub{font-size:17px;letter-spacing:-.01em}
+.thr.L6 .meta2{margin-top:4px;font-size:13px;color:var(--n500)}
+.thr.L6 .cols{display:grid;grid-template-columns:1fr 320px;gap:44px;margin-top:22px;align-items:start}
+.thr.L6 .lab{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--n500);font-weight:600;margin:0 0 10px}
+.thr.L6 .p{max-width:none}
+.thr.L6 .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.thr.L6 .pills span{font-size:12px;border-radius:999px;padding:1px 9px;background:var(--n100);color:var(--n600)}
+.thr.L6 .rail{margin-top:2px}
+.thr.L6 .foot{margin-top:22px;display:flex;justify-content:flex-start}
+
+/* drawer summary (L6 pieces, stacked for 640px) */
+.sheet .band{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:-24px -24px 18px;padding:10px 24px;background:hsl(0 0% 96%);border-bottom:1px solid var(--n200);font-size:12.5px;color:var(--n600)}
+.sheet .band b{font-weight:600;color:var(--n800)}
+.sheet .ttl{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding-right:20px}
+.sheet .ttl h2{font-size:18px}
+.sheet .tg{font-size:11px;border-radius:999px;padding:1px 8px;background:var(--n100);color:var(--n500);white-space:nowrap;margin-top:3px}
+.sheet .meta2{margin-top:4px;font-size:13px;color:var(--n500)}
+.sheet .lab{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--n500);font-weight:600;margin:22px 0 10px}
+.sheet .p{margin:0;font-size:13.5px;line-height:1.6;color:var(--n800)}
+.sheet .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.sheet .pills span{font-size:12px;border-radius:999px;padding:1px 9px;background:var(--n100);color:var(--n600)}
+.sheet .rail{padding-left:20px}
+.sheet .foot{margin-top:18px}
+.sheet .srcl{font-size:11.5px;color:var(--n500);border:1px solid var(--n200);border-radius:var(--r-md);padding:2px 8px;background:hsl(0 0% 98%);display:inline-flex;gap:6px;align-items:center}
+.sheet .srcl svg{width:11px;height:11px;stroke:var(--n500);fill:none;stroke-width:1.8}
+.sheet hr.div{border:0;border-top:1px solid var(--n200);margin:24px -24px 4px}
+
+/* mini chain in the monitoring table */
+.mc{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.mc .c{font-size:11.5px;border:1px solid var(--n300);border-radius:4px;padding:0 7px;line-height:1.6;background:#fff;color:var(--n800)}
+.mc .c.you{background:var(--n100);border-color:var(--n200);color:var(--n600)}
+.mc .c.end{border:1.5px solid var(--n900);font-weight:600}
+.mc .c.off{border-style:dashed;color:var(--n500)}
+.mc .a{color:var(--n400);font-size:12px}
+.mc .a.off{color:var(--n300)}
+.mc .note{font-size:11.5px;color:var(--n500);margin-left:2px}
+
+/* inline incident card (involved view) */
+.inc{background:#fff;border:1px solid var(--n200);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+.inc .vis{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:11px 22px;background:var(--n900);color:#fff;font-size:13px}
+.inc .vis b{font-weight:600}
+.inc .vis span{color:hsl(0 0% 72%);white-space:nowrap}
+.inc .in{padding:18px 22px 16px}
+.inc h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.015em}
+.inc .because{margin:6px 0 0;font-size:13.5px;color:var(--n600);line-height:1.55;max-width:80ch}
+.inc .because b{color:var(--n900);font-weight:600}
+.inc .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.inc .chips span{font-size:12px;border:1px solid var(--n300);border-radius:4px;padding:1px 8px;background:#fff;color:var(--n700)}
+.inc .chips span.end{border:1.5px solid var(--n900);color:var(--n900);font-weight:600}
+.inc .lab{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--n500);font-weight:600;margin:16px 0 6px}
+.inc .p{margin:0;font-size:14px;line-height:1.6;color:var(--n800);max-width:82ch}
+.inc .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.inc .pills span{font-size:12px;border-radius:999px;padding:1px 9px;background:var(--n100);color:var(--n600)}
+.inc .srcl{font-size:11.5px;color:var(--n500);border:1px solid var(--n200);border-radius:var(--r-md);padding:2px 8px;background:hsl(0 0% 98%);display:inline-flex;gap:6px;align-items:center;margin-top:16px}
+.inc .srcl svg{width:11px;height:11px;stroke:var(--n500);fill:none;stroke-width:1.8}
+.inc .upd{border-top:1px solid var(--n200);padding:18px 22px 6px;background:hsl(0 0% 98.5%)}
+.inc .upd .lab{margin-top:0}
+.inc .stepper{margin:6px 0 10px;background:#fff}
+.inc .msg{padding:18px 0;border-bottom:1px solid var(--n200)}
+.inc .msg:last-child{border-bottom:0}
+
+.inc .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.inc .when{display:flex;align-items:center;gap:14px;font-size:12.5px;color:var(--n500);white-space:nowrap;padding-top:3px}
+.inc .srcico{display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;border:1px solid var(--n200);border-radius:var(--r-md);color:var(--n600);background:#fff}
+.inc .srcico:hover{background:var(--n100);color:var(--n900)}
+.inc .srcico svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* push panel: sits beside main, no scrim, content reflows */
+.panel{display:none;width:560px;flex:0 0 auto;border-left:1px solid var(--n200);background:#fff;overflow:auto;padding:20px 24px 40px}
+.panel.on{display:block}
+.panel .ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px}
+.panel .ph h3{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.panel .ph .sub{margin:2px 0 0}
+.panel .x{width:28px;height:28px;border-radius:var(--r-md);color:var(--n500);font-size:18px;flex:0 0 auto}
+.panel .x:hover{background:var(--n100)}
+.panel .stepper{margin:14px 0 6px}
+.panel .msg{padding:18px 0;border-bottom:1px solid var(--n200)}
+.panel .msg:last-child{border-bottom:0}
+.inc .updrow{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--n200);padding:12px 22px;background:hsl(0 0% 98.5%);font-size:13px;color:var(--n600)}
+.inc .updrow b{color:var(--n900);font-weight:600}
+
+.inc .crumb{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:13px;color:var(--n700);flex-wrap:wrap}
+.inc .crumb span{display:inline-flex;align-items:baseline;gap:5px}
+.inc .crumb span.end{font-weight:600;color:var(--n900)}
+.inc .crumb small{font-size:11px;color:var(--n500);font-weight:400}
+.inc .crumb i{color:var(--n400);font-style:normal;font-size:14px}
+
+/* checked but not involving you: quiet, collapsed */
+.chk{margin-top:28px;border:1px solid var(--n200);border-radius:var(--r-lg);background:hsl(0 0% 98.5%)}
+.chkh{display:flex;align-items:center;gap:10px;width:100%;padding:11px 16px;text-align:left;font-size:13px;color:var(--n600)}
+.chkh b{color:var(--n800);font-weight:600}
+.chkh svg{width:14px;height:14px;stroke:var(--n500);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.chkh .cv{margin-left:auto;color:var(--n400);font-size:16px;transition:transform .12s;font-style:normal}
+.chk.open .chkh .cv{transform:rotate(90deg)}
+.chkb{border-top:1px solid var(--n200);background:#fff;border-radius:0 0 var(--r-lg) var(--r-lg);overflow:hidden}
+
+.frow{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px}
+.status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--n500);white-space:nowrap;padding-top:8px}
+.status svg{width:13px;height:13px;stroke:var(--n500);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.status .sep{color:var(--n300)}
+.status .tip{left:auto;right:0}
+.status .tt a{color:var(--n800)}
+.ckline{margin:18px 0 0;font-size:13px;color:var(--n500)}
+.ckline a{color:var(--n900);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.plain{margin-top:10px}
+.plain .li{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--n200);font-size:13px;cursor:pointer}
+.plain .li:last-child{border-bottom:0}
+.plain .li:hover .s{text-decoration:underline;text-underline-offset:3px}
+.plain .li .s{font-weight:500}
+.plain .li .w{color:var(--n500);font-size:12px;margin-top:1px}
+.plain .li .d{color:var(--n500);white-space:nowrap;font-size:12px;padding-top:1px}
+
+/* unified alert cards */
+.alist{display:flex;flex-direction:column;gap:10px}
+.al{background:#fff;border:1px solid var(--n200);border-radius:var(--r-lg);box-shadow:var(--sh);padding:14px 18px 14px;cursor:pointer}
+.al:hover{border-color:var(--n400)}
+.al.sel{border-color:var(--n900)}
+.al .hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.al h2{margin:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+.al .when{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--n500);white-space:nowrap;padding-top:1px}
+.al .srcico{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;border:1px solid var(--n200);border-radius:var(--r-md);color:var(--n600);background:#fff}
+.al .srcico:hover{background:var(--n100);color:var(--n900)}
+.al .srcico svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.al .crumb{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12.5px;color:var(--n600);flex-wrap:wrap}
+.al .crumb span{display:inline-flex;align-items:baseline;gap:5px}
+.al .crumb span.end{font-weight:600;color:var(--n900)}
+.al .crumb span.off{color:var(--n500)}
+.al .crumb small{font-size:11px;color:var(--n500);font-weight:400}
+.al .crumb i{color:var(--n400);font-style:normal;font-size:14px}
+.al .line{margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--n800);max-width:100ch}
+.panel{width:460px;padding:18px 22px 40px}
+.panel .ph h3{font-size:15.5px;padding-right:8px}
+.panel .lab{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--n500);font-weight:600;margin:14px 0 6px}
+.panel .p{margin:0;font-size:13.5px;line-height:1.6;color:var(--n800)}
+.panel .pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.panel .pills span{font-size:12px;border-radius:999px;padding:1px 9px;background:var(--n100);color:var(--n600)}
+.panel .srcline{margin:12px 0 0;font-size:12px;color:var(--n500)}
+.panel .srcline a{color:var(--n700);text-decoration:underline;text-underline-offset:3px}
+.panel .srcline a:hover{color:var(--n900)}
+.panel .stepper{margin:6px 0 8px}
+
+.banner .bi{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.views button{display:inline-flex;align-items:center;gap:6px}
+.views .ti{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* thread in the panel */
+.al .when .sep{color:var(--n300)}
+.al .when b{color:var(--n900);font-weight:600}
+.al .thr-n{display:inline-flex;align-items:center;gap:5px}
+.al .thr-n svg{width:13px;height:13px;stroke:var(--n500);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.panel .thr-note{margin:0 0 10px;font-size:12.5px;color:var(--n500)}
+.thread{border:1px solid var(--n200);border-radius:var(--r-lg);overflow:hidden;background:#fff}
+.tm{border-bottom:1px solid var(--n200)}
+.tm:last-child{border-bottom:0}
+.tmh{display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;text-align:left;font-size:13px}
+.tmh:hover{background:hsl(0 0% 97%)}
+.tm.open .tmh{background:hsl(0 0% 97.5%)}
+.tmd{flex:0 0 66px;color:var(--n500);font-size:12.5px;font-variant-numeric:tabular-nums}
+.tml b{font-weight:600}
+.tmh .cv{margin-left:auto;color:var(--n400);font-size:16px;transition:transform .12s;font-style:normal}
+.tm.open .tmh .cv{transform:rotate(90deg)}
+.tmb{padding:4px 14px 16px}
+.tmb .src{font-size:12px}
+.tmb h4{margin:14px 0 4px;font-size:13px;font-weight:600}
+.tmb p{margin:0 0 6px;font-size:13px;line-height:1.6}
+.tmb blockquote{margin:10px 0;padding:10px 14px;border-left:3px solid var(--n300);background:hsl(0 0% 98%);font-size:13px;line-height:1.6}
+.tmb .fic{font-size:12px;color:var(--n400);font-style:italic;margin:-4px 0 10px}
+.tmb .path{font-size:13px;color:var(--n700);font-weight:500}
+
+/* unread */
+.vchips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.vchip{font-size:11.5px;border:1px solid var(--n200);border-radius:4px;padding:1px 9px;line-height:1.6;background:var(--n100);color:var(--n800);white-space:nowrap}
+.vchip.off{background:#fff;border-color:var(--n200);color:var(--n400)}
+.vmore{font-size:11.5px;color:var(--n500);align-self:center;padding-left:2px}
+
+.sh{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--n500);border-radius:4px}
+.sh:hover,.sh.on{color:var(--n900)}
+.sh svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+
+/* expanded subprocessor row */
+tr.open td{border-bottom:0;background:hsl(0 0% 97%)}
+tr.xrow td{padding:0 16px 16px 60px;background:hsl(0 0% 97%);border-bottom:1px solid var(--n200)}
+.sx{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:32px;padding:16px 18px;background:#fff;border:1px solid var(--n200);border-radius:var(--r-lg)}
+.sxn{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--n500);font-weight:600}
+.sxn .mut{font-weight:400;font-size:13px}
+.sxd{margin:6px 0 0;font-size:13px;line-height:1.55;color:var(--n700);max-width:60ch}
+.sxf{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;margin:14px 0 0}
+.sxf div{min-width:0}
+.sxf dt{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--n500);font-weight:600}
+.sxf dd{margin:2px 0 0;font-size:13px;color:var(--n800)}
+.sxh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--n500);font-weight:600;margin-bottom:8px}
+.sxh .lg{text-transform:none;letter-spacing:0;font-weight:400;font-size:11.5px;display:inline-flex;align-items:center;gap:5px}
+.sxh .lg i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-left:6px}
+.sxp{margin-bottom:10px}
+.sxv{font-size:12.5px;color:var(--n600);margin-bottom:5px}
+.sxp.off .sxv{color:var(--n400)}
+.dcs{display:flex;flex-wrap:wrap;gap:6px}
+.dc{display:inline-flex;align-items:center;gap:7px;font-size:12px;border:1px solid var(--n200);border-radius:4px;padding:2px 9px;background:#fff;color:var(--n800)}
+.dc i,.lg i{width:8px;height:8px;border-radius:2px;display:inline-block;flex:0 0 auto}
+i.high{background:var(--n900)}
+i.medium{background:var(--n500)}
+i.low{background:var(--n300)}
+
+/* expand control, first column */
+td.xc,th.xc{width:44px;padding-right:0}
+.xbtn{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;color:var(--n500)}
+tr.act:hover .xbtn{color:var(--n900)}
+.xbtn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .12s}
+.xbtn.open{color:var(--n900)}
+.xbtn.open svg{transform:rotate(90deg)}
+
+/* vendor profile header, matching the app */
+.prof{align-items:flex-start}
+.prof .meta{margin-top:4px}
+.prof .usedfor{margin:10px 0 0;font-size:13.5px;color:var(--n600)}
+.prof .usedfor b{color:var(--n900);font-weight:600;margin-right:6px}
+.prof .links{display:flex;gap:18px;margin-top:10px;font-size:13.5px}
+.prof .links a{display:inline-flex;align-items:center;gap:6px;color:var(--n700);text-decoration:none;cursor:pointer}
+.prof .links a:hover{color:var(--n900);text-decoration:underline;text-underline-offset:3px}
+.prof .links svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8}
+.prof .acts{display:flex;gap:10px;flex:0 0 auto}
+.glance{gap:0;padding:14px 24px;border-radius:0 0 var(--r-lg) var(--r-lg)}
+.glance .gl{flex:1}
+.glance .gl span{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--n500);font-weight:500;margin-bottom:4px}
+.glance .gl b{font-size:15px;font-weight:500}
+.glance .gl b.dotb{display:inline-flex;align-items:center;gap:8px}
+.glance .gl b.dotb i{width:8px;height:8px;border-radius:99px;background:var(--n800);display:inline-block}
+.glance .gl b.dotb i.off{background:var(--n300)}
+.glance .gl b small{color:var(--n500);font-size:12px}
+.vtabs{margin:22px 0 14px;gap:26px}
+.vtabs button{font-size:14px;padding-bottom:10px}
+
+/* monitoring line + sources tooltip */
+.prof .src{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:12.5px;color:var(--n500)}
+.prof .src svg{width:13px;height:13px;stroke:var(--n500);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tt{position:relative;display:inline-block;padding-bottom:10px;margin-bottom:-10px}
+.tt.open .tip{display:block}
+.tt a{color:var(--n800);text-decoration:underline;text-underline-offset:3px;text-decoration-style:dotted;cursor:default}
+.tip{display:none;position:absolute;left:0;top:100%;z-index:20;width:360px;background:#fff;border:1px solid var(--n200);border-radius:8px;box-shadow:0 8px 26px rgb(0 0 0/.12);padding:10px 14px 6px;font-size:12.5px;color:var(--n800)}
+.tt:hover .tip{display:block}
+.tiph{font-weight:600;margin-bottom:6px}
+.tipr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;border-top:1px solid var(--n200);color:var(--n800);text-decoration:none}
+.tipr:first-child{border-top:0}
+.tipr:hover span{text-decoration:underline;text-underline-offset:3px}
+.tipr svg{width:12px;height:12px;stroke:var(--n500);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tip{width:260px}
+
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.toprow .back{margin-top:0}
+.toprow .src{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--n500)}
+.toprow .src svg{width:13px;height:13px;stroke:var(--n500);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.toprow .tip{left:auto;right:0}
+
+.inert,.nav.inert{pointer-events:none;cursor:default}
+.nav.inert:hover{background:none}
+
+.arrlink{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--n900);cursor:pointer}
+.arrlink .arr{transition:transform .12s;display:inline-block}
+.arrlink:hover .arr{transform:translateX(3px)}
+
+.al h2{display:flex;align-items:center;gap:8px}
+.al h2 .warn{width:17px;height:17px;flex:0 0 auto;stroke:var(--n900);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* option F: filled title band, white body */
+.al{padding:0;overflow:hidden}
+.al .band{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 18px;background:#fff;border-bottom:1px solid var(--n200)}
+.al .band .when{padding-top:0}
+.al .band .srcico{background:#fff;flex:0 0 auto}
+.al .body{padding:12px 18px 14px}
+.al .body .crumb{margin-top:0}
+.al .body .line{margin-top:6px}
+.al h2{font-weight:400}
+.al.unread h2{font-weight:600}
+.al .thr-n b{font-weight:600}
+
+/* moderator control: hidden from participants, press m to toggle */
+.modbar{position:fixed;left:16px;bottom:16px;z-index:200;display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--n900);color:#fff;border-radius:8px;box-shadow:0 8px 24px rgb(0 0 0/.25);font-size:12px}
+.modbar .ml{color:hsl(0 0% 65%);margin-right:6px;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+.modbar button{height:26px;padding:0 10px;border-radius:5px;font-size:12px;color:#fff;border:1px solid hsl(0 0% 35%);background:hsl(0 0% 18%)}
+.modbar button.on{background:#fff;color:var(--n900);border-color:#fff;font-weight:600}
+.modbar button.mr{margin-left:8px;border-color:transparent;color:hsl(0 0% 70%);background:none}
+.mrad{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:5px;cursor:pointer;color:hsl(0 0% 85%)}
+.mrad:has(input:checked){background:hsl(0 0% 22%);color:#fff;font-weight:600}
+.mrad input{accent-color:#fff;margin:0}
+.modbar .mh{margin-left:10px;font-size:10.5px;color:hsl(0 0% 50%)}
+
+/* map zoom */
+.mapcard{position:relative}
+svg.map{cursor:grab;touch-action:none}
+svg.map.dragging{cursor:grabbing}
+.zoomctl{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:4px}
+.zoomctl button{width:30px;height:30px;border:1px solid var(--n300);border-radius:var(--r-md);background:#fff;font-size:16px;line-height:1;color:var(--n800);box-shadow:var(--sh)}
+.zoomctl button:hover{background:var(--n100)}
+.zoomhint{position:absolute;left:14px;bottom:10px;font-size:11.5px;color:var(--n400)}
+.hide{display:none}
+.nav .nbadge{margin-left:auto;min-width:18px;height:18px;border-radius:999px;background:var(--n900);color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;padding:0 5px}
+.al .thr-n b{color:var(--n900);font-weight:600}
+.hide{display:none}
+</style>
+<div class="app">
+ <div class="banner" id="banner"><svg class="bi" viewBox="0 0 24 24"><path d="M10.3 3.9 2.4 17.5A1.9 1.9 0 0 0 4 20.4h16a1.9 1.9 0 0 0 1.6-2.9L13.7 3.9a1.9 1.9 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg><span>A risk advisory for a 4th party subprocessor has been detected.</span><a onclick="openThread('salesloft')">Review <span class="arr">&#8594;</span></a></div>
+ <div class="row">
+  <aside class="sb">
+   <div class="sbh"><div class="logo"></div><div><p class="t">Third Party Risk Agent</p><p class="s">powered by Conveyor</p></div></div>
+   <div class="sbg"><div class="sbl">Platform</div>
+    <button class="nav inert" data-nav="new" tabindex="-1"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>New assessment</button>
+    <button class="nav inert" data-nav="assessments" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Assessments</button>
+    <button class="nav" data-nav="vendors" onclick="go('vendors')"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>Vendor portfolio</button>
+    <button class="nav" data-nav="monitoring" onclick="go('monitoring')"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>4th party monitoring<span class="nbadge">1</span></button>
+    <button class="nav inert" data-nav="connections" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>Connections</button>
+   </div>
+   <div class="sbf"><div class="av">HR</div><div><p>Hannah Reyes</p><p class="e">Third party risk</p></div></div>
+  </aside>
+  <main id="main"></main>
+  <aside class="panel" id="panel"></aside>
+ </div>
+</div>
+<div class="modbar" id="modbar"><span class="ml">State inspector</span><span id="modsteps"></span><button class="mr" onclick="modReset()">Reset</button><span class="mh">press m to hide</span></div>
+<div class="scrim" id="scrim" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"></div>
+<script>
+/* ---------- fourth party profiles (all real companies) ---------- */
+const FP = {
+ 'Amazon Web Services':{hq:'Seattle, US',yr:2006,does:'Cloud infrastructure. Compute, storage and networking that most SaaS products run on.',docs:['SOC 2 Type II','ISO 27001','SOC 3'],use:'Cloud hosting'},
+ 'Google Cloud':{hq:'Mountain View, US',yr:2008,does:'Cloud infrastructure and data services.',docs:['SOC 2 Type II','ISO 27001'],use:'Cloud hosting'},
+ 'Microsoft Azure':{hq:'Redmond, US',yr:2010,does:'Cloud infrastructure and identity services.',docs:['SOC 2 Type II','ISO 27001'],use:'Cloud hosting'},
+ 'Cloudflare':{hq:'San Francisco, US',yr:2009,does:'Network edge, DNS, CDN and web security.',docs:['SOC 2 Type II','ISO 27001'],use:'Edge network and DNS'},
+ 'Salesforce':{hq:'San Francisco, US',yr:1999,does:'CRM platform. Also hosts support case records for many companies through Service Cloud.',docs:['SOC 2 Type II','ISO 27001'],use:'CRM and support case records'},
+ 'Salesloft':{hq:'Atlanta, US',yr:2011,does:'Sales engagement platform. Owns Drift, a website chat product acquired in 2024, which connects to Salesforce.',docs:['SOC 2 Type II'],use:'Website chat (Drift), connected to Salesforce'},
+ 'Zendesk':{hq:'San Francisco, US',yr:2007,does:'Customer support ticketing.',docs:['SOC 2 Type II','ISO 27001'],use:'Support ticketing'},
+ 'Okta':{hq:'San Francisco, US',yr:2009,does:'Identity and single sign on.',docs:['SOC 2 Type II','ISO 27001','FedRAMP'],use:'Employee single sign on'},
+ 'Workday':{hq:'Pleasanton, US',yr:2005,does:'HR and finance system of record.',docs:['SOC 2 Type II','ISO 27001'],use:'Employee HR records'},
+ 'Slack':{hq:'San Francisco, US',yr:2013,does:'Team messaging.',docs:['SOC 2 Type II','ISO 27001'],use:'Internal messaging'},
+ 'Zoom':{hq:'San Jose, US',yr:2011,does:'Video meetings.',docs:['SOC 2 Type II','ISO 27001'],use:'Video meetings'},
+ 'Atlassian':{hq:'Sydney, AU',yr:2002,does:'Jira and Confluence. Issue tracking and documentation.',docs:['SOC 2 Type II','ISO 27001'],use:'Issue tracking'},
+ 'Datadog':{hq:'New York, US',yr:2010,does:'Infrastructure monitoring, logs and APM.',docs:['SOC 2 Type II','ISO 27001'],use:'Logs and monitoring'},
+ 'Snowflake':{hq:'Bozeman, US',yr:2012,does:'Cloud data warehouse.',docs:['SOC 2 Type II','ISO 27001'],use:'Data warehouse'},
+ 'Segment':{hq:'San Francisco, US',yr:2011,does:'Customer data pipeline, owned by Twilio.',docs:['SOC 2 Type II'],use:'Product event routing'},
+ 'Marketo':{hq:'San Jose, US',yr:2006,does:'Marketing automation, owned by Adobe.',docs:['SOC 2 Type II'],use:'Marketing email'},
+ 'Twilio':{hq:'San Francisco, US',yr:2008,does:'Programmable SMS, voice and email (SendGrid).',docs:['SOC 2 Type II','ISO 27001'],use:'SMS and voice'},
+ 'SendGrid':{hq:'Denver, US',yr:2009,does:'Transactional email delivery, part of Twilio.',docs:['SOC 2 Type II'],use:'Transactional email'},
+ 'PagerDuty':{hq:'San Francisco, US',yr:2009,does:'Incident alerting and on call.',docs:['SOC 2 Type II','ISO 27001'],use:'Incident alerting'},
+ 'GitHub':{hq:'San Francisco, US',yr:2008,does:'Source code hosting, owned by Microsoft.',docs:['SOC 2 Type II'],use:'Source code'},
+ 'Stripe':{hq:'San Francisco, US',yr:2010,does:'Payments.',docs:['SOC 2 Type II','PCI DSS'],use:'Payments'},
+ 'Bill.com':{hq:'San Jose, US',yr:2006,does:'Accounts payable and receivable.',docs:['SOC 2 Type II'],use:'Vendor payments'},
+ 'NetSuite':{hq:'Austin, US',yr:1998,does:'ERP and accounting, owned by Oracle.',docs:['SOC 2 Type II'],use:'Accounting'},
+ 'Coupa':{hq:'San Mateo, US',yr:2006,does:'Procurement and spend management.',docs:['SOC 2 Type II','ISO 27001'],use:'Procurement'},
+ 'DocuSign':{hq:'San Francisco, US',yr:2003,does:'Electronic signature.',docs:['SOC 2 Type II','ISO 27001'],use:'Contract signature'},
+ 'Greenhouse':{hq:'New York, US',yr:2012,does:'Recruiting and applicant tracking.',docs:['SOC 2 Type II'],use:'Recruiting'},
+ 'Lever':{hq:'San Francisco, US',yr:2012,does:'Applicant tracking, owned by Employ.',docs:['SOC 2 Type II'],use:'Recruiting'},
+ 'Gainsight':{hq:'San Francisco, US',yr:2009,does:'Customer success management.',docs:['SOC 2 Type II'],use:'Customer health tracking'},
+ 'Qualtrics':{hq:'Provo, US',yr:2002,does:'Survey and experience management.',docs:['SOC 2 Type II','ISO 27001'],use:'Customer surveys'},
+ 'LinkedIn':{hq:'Sunnyvale, US',yr:2003,does:'Professional network and recruiting tools.',docs:['SOC 2 Type II'],use:'Recruiting outreach'},
+ 'Sprinklr':{hq:'New York, US',yr:2009,does:'Social media management.',docs:['SOC 2 Type II'],use:'Social media'},
+ 'Tableau':{hq:'Seattle, US',yr:2003,does:'Business intelligence, owned by Salesforce.',docs:['SOC 2 Type II'],use:'Reporting'},
+ 'Looker':{hq:'Santa Cruz, US',yr:2012,does:'Business intelligence, owned by Google.',docs:['SOC 2 Type II'],use:'Reporting'},
+ 'Fivetran':{hq:'Oakland, US',yr:2012,does:'Managed data pipelines into warehouses.',docs:['SOC 2 Type II','ISO 27001'],use:'Data pipelines'},
+ 'Databricks':{hq:'San Francisco, US',yr:2013,does:'Data and AI platform.',docs:['SOC 2 Type II','ISO 27001'],use:'Data processing'},
+ 'Anthropic':{hq:'San Francisco, US',yr:2021,does:'AI models (Claude) offered through an API.',docs:['SOC 2 Type II','ISO 27001'],use:'AI model API'},
+ 'OpenAI':{hq:'San Francisco, US',yr:2015,does:'AI models (GPT) offered through an API.',docs:['SOC 2 Type II'],use:'AI model API'},
+ 'Cohere':{hq:'Toronto, CA',yr:2019,does:'Enterprise AI models and search.',docs:['SOC 2 Type II'],use:'AI model API'},
+ 'Pinecone':{hq:'New York, US',yr:2019,does:'Vector database for AI retrieval.',docs:['SOC 2 Type II'],use:'Vector search'},
+ 'Replicate':{hq:'San Francisco, US',yr:2019,does:'Hosted open source AI models.',docs:[],use:'AI model hosting'},
+ 'Together AI':{hq:'San Francisco, US',yr:2022,does:'Cloud for running open source AI models.',docs:['SOC 2 Type II'],use:'AI inference'},
+ 'Granola':{hq:'London, UK',yr:2023,does:'AI meeting notes that run on the user’s device and summarise in the cloud.',docs:[],use:'Meeting notes'},
+ 'Intercom':{hq:'San Francisco, US',yr:2011,does:'Customer messaging and support chat.',docs:['SOC 2 Type II','ISO 27001'],use:'Support chat'},
+ 'HubSpot':{hq:'Cambridge, US',yr:2006,does:'CRM and marketing.',docs:['SOC 2 Type II'],use:'Marketing CRM'},
+ 'Amplitude':{hq:'San Francisco, US',yr:2012,does:'Product analytics.',docs:['SOC 2 Type II','ISO 27001'],use:'Product analytics'},
+ 'Mixpanel':{hq:'San Francisco, US',yr:2009,does:'Product analytics.',docs:['SOC 2 Type II'],use:'Product analytics'},
+ 'Sentry':{hq:'San Francisco, US',yr:2012,does:'Application error tracking.',docs:['SOC 2 Type II'],use:'Error tracking'},
+ 'LaunchDarkly':{hq:'Oakland, US',yr:2014,does:'Feature flags.',docs:['SOC 2 Type II','ISO 27001'],use:'Feature flags'},
+ 'Vercel':{hq:'San Francisco, US',yr:2015,does:'Frontend hosting.',docs:['SOC 2 Type II'],use:'Web hosting'},
+ 'Fastly':{hq:'San Francisco, US',yr:2011,does:'Edge cloud and CDN.',docs:['SOC 2 Type II','ISO 27001'],use:'Content delivery'},
+ 'Akamai':{hq:'Cambridge, US',yr:1998,does:'CDN and security.',docs:['SOC 2 Type II','ISO 27001'],use:'Content delivery'},
+ 'Mailchimp':{hq:'Atlanta, US',yr:2001,does:'Email marketing, owned by Intuit.',docs:['SOC 2 Type II'],use:'Marketing email'},
+ 'Gong':{hq:'San Francisco, US',yr:2015,does:'Sales call recording and analysis.',docs:['SOC 2 Type II','ISO 27001'],use:'Call recording'},
+ 'Elastic':{hq:'Mountain View, US',yr:2012,does:'Search and observability.',docs:['SOC 2 Type II'],use:'Search and logs'},
+ 'MongoDB':{hq:'New York, US',yr:2007,does:'Document database.',docs:['SOC 2 Type II','ISO 27001'],use:'Database hosting'},
+ 'Auth0':{hq:'Bellevue, US',yr:2013,does:'Customer identity, owned by Okta.',docs:['SOC 2 Type II','ISO 27001'],use:'Customer login'},
+ 'Box':{hq:'Redwood City, US',yr:2005,does:'File storage and sharing.',docs:['SOC 2 Type II','ISO 27001'],use:'File storage'},
+ 'Dropbox':{hq:'San Francisco, US',yr:2007,does:'File storage and sharing.',docs:['SOC 2 Type II','ISO 27001'],use:'File storage'},
+ 'Rippling':{hq:'San Francisco, US',yr:2016,does:'HR, payroll and IT.',docs:['SOC 2 Type II'],use:'Payroll'},
+ 'Brex':{hq:'San Francisco, US',yr:2017,does:'Corporate cards and spend.',docs:['SOC 2 Type II'],use:'Corporate cards'},
+ 'Sift':{hq:'San Francisco, US',yr:2011,does:'Fraud detection.',docs:['SOC 2 Type II'],use:'Fraud scoring'},
+ 'Sumo Logic':{hq:'Redwood City, US',yr:2010,does:'Log analytics.',docs:['SOC 2 Type II'],use:'Log analytics'},
+ 'Ada':{hq:'Toronto, CA',yr:2016,does:'AI customer service automation.',docs:['SOC 2 Type II'],use:'Support automation'},
+ 'Front':{hq:'San Francisco, US',yr:2013,does:'Shared inbox for customer communication.',docs:['SOC 2 Type II'],use:'Customer email'},
+ 'Vanta':{hq:'San Francisco, US',yr:2018,does:'Compliance automation.',docs:['SOC 2 Type II','ISO 27001'],use:'Compliance evidence'},
+ 'Deel':{hq:'San Francisco, US',yr:2019,does:'Global payroll and contractor payments.',docs:['SOC 2 Type II'],use:'Contractor payments'},
+ 'Carta':{hq:'San Francisco, US',yr:2012,does:'Equity management.',docs:['SOC 2 Type II'],use:'Equity records'},
+ 'Loom':{hq:'San Francisco, US',yr:2015,does:'Async video, owned by Atlassian.',docs:['SOC 2 Type II'],use:'Screen recording'},
+ 'Calendly':{hq:'Atlanta, US',yr:2013,does:'Scheduling.',docs:['SOC 2 Type II'],use:'Meeting scheduling'},
+ 'Zapier':{hq:'San Francisco, US',yr:2011,does:'Workflow automation between apps.',docs:['SOC 2 Type II'],use:'Automation'},
+ 'Algolia':{hq:'Paris, FR',yr:2012,does:'Hosted search.',docs:['SOC 2 Type II','ISO 27001'],use:'Site search'},
+ 'Iterable':{hq:'San Francisco, US',yr:2013,does:'Customer messaging.',docs:['SOC 2 Type II'],use:'Lifecycle email'},
+ 'Customer.io':{hq:'Portland, US',yr:2012,does:'Customer messaging.',docs:['SOC 2 Type II'],use:'Lifecycle email'},
+ 'Statuspage':{hq:'Sydney, AU',yr:2013,does:'Hosted status pages, owned by Atlassian.',docs:['SOC 2 Type II'],use:'Status page'},
+ 'Metabase':{hq:'San Francisco, US',yr:2014,does:'Open source business intelligence.',docs:['SOC 2 Type II'],use:'Reporting'},
+ 'Redis':{hq:'Mountain View, US',yr:2011,does:'In memory data store.',docs:['SOC 2 Type II','ISO 27001'],use:'Caching'},
+ 'Confluent':{hq:'Mountain View, US',yr:2014,does:'Managed Kafka streaming.',docs:['SOC 2 Type II','ISO 27001'],use:'Event streaming'}
+};
+const POOL = Object.keys(FP);
+
+/* Data types Hannah sends, by vendor category */
+const DATA_BY_CAT = {
+ infra:['Support ticket content','Configuration and logs','API tokens (occasional)','Traffic metadata'],
+ support:['Support ticket content','Customer contact details','Account identifiers'],
+ collab:['Employee names and emails','Documents and messages'],
+ data:['Product usage events','Customer account identifiers'],
+ ai:['Meeting audio and transcripts','Employee names and emails'],
+ sales:['Prospect and customer contact details','Call recordings'],
+ fin:['Employee payroll details','Vendor payment details'],
+ hr:['Employee HR records'],
+ dev:['Source code','Configuration and logs'],
+ sec:['Employee identities','Authentication logs']
+};
+
+/* ---------- vendors (real companies) ---------- */
+/* [name, category, product line, status, inherent, residual, lastAssessed] */
+const V = [
+ ['Cloudflare','infra','Edge network and DNS','active','Medium','Low','2025-08-19'],
+ ['Amazon Web Services','infra','Cloud hosting','active','Critical','Medium','2025-07-30'],
+ ['Google Cloud','infra','Cloud hosting','active','High','Medium','2025-06-12'],
+ ['Microsoft Azure','infra','Cloud hosting','active','High','Medium','2025-05-28'],
+ ['Fastly','infra','Content delivery','active','Medium','Low','2025-04-14'],
+ ['Vercel','infra','Frontend hosting','active','Medium','Low','2025-07-02'],
+ ['MongoDB','infra','Database hosting','active','High','Medium','2025-03-19'],
+ ['Redis','infra','Caching','active','Medium','Low','2025-02-11'],
+ ['Confluent','infra','Event streaming','active','Medium','Medium','2025-06-30'],
+ ['Twilio','infra','SMS and voice','active','High','Medium','2025-05-06'],
+ ['Zendesk','support','Support ticketing','active','High','Medium','2025-08-01'],
+ ['Intercom','support','Support chat','active','High','Medium','2025-07-11'],
+ ['Front','support','Customer email','active','Medium','Low','2025-04-22'],
+ ['Ada','support','Support automation','active','Medium','Medium','2025-06-03'],
+ ['Slack','collab','Internal messaging','active','Medium','Low','2025-08-05'],
+ ['Zoom','collab','Video meetings','active','Medium','Low','2025-06-18'],
+ ['Atlassian','collab','Issue tracking','active','Medium','Low','2025-07-25'],
+ ['Notion','collab','Documentation','active','Medium','Medium','2025-05-13'],
+ ['Loom','collab','Screen recording','active','Low','Low','2025-01-27'],
+ ['Calendly','collab','Meeting scheduling','active','Low','Low','2025-02-04'],
+ ['Box','collab','File storage','active','Medium','Low','2025-03-09'],
+ ['Dropbox','collab','File storage','inactive','Medium','Low','2024-11-20'],
+ ['Google Workspace','collab','Email and documents','active','High','Medium','2025-08-08'],
+ ['Microsoft 365','collab','Email and documents','active','High','Medium','2025-07-17'],
+ ['Figma','collab','Design','active','Low','Low','2025-04-01'],
+ ['Miro','collab','Whiteboarding','active','Low','Low','2025-02-19'],
+ ['Asana','collab','Project management','inactive','Low','Low','2024-10-08'],
+ ['Datadog','data','Logs and monitoring','active','High','Medium','2025-08-12'],
+ ['Snowflake','data','Data warehouse','active','Critical','Medium','2025-07-08'],
+ ['Fivetran','data','Data pipelines','active','High','Medium','2025-06-24'],
+ ['Databricks','data','Data processing','active','High','Medium','2025-05-20'],
+ ['Segment','data','Product event routing','active','High','Medium','2025-04-28'],
+ ['Amplitude','data','Product analytics','active','Medium','Low','2025-03-25'],
+ ['Mixpanel','data','Product analytics','inactive','Medium','Low','2024-09-15'],
+ ['Looker','data','Reporting','active','Medium','Low','2025-02-26'],
+ ['Metabase','data','Reporting','active','Low','Low','2025-01-14'],
+ ['Sumo Logic','data','Log analytics','active','Medium','Low','2025-06-09'],
+ ['Elastic','data','Search and logs','active','Medium','Medium','2025-05-01'],
+ ['Sentry','dev','Error tracking','active','Medium','Low','2025-07-21'],
+ ['GitHub','dev','Source code','active','High','Medium','2025-08-14'],
+ ['LaunchDarkly','dev','Feature flags','active','Low','Low','2025-03-03'],
+ ['CircleCI','dev','Continuous integration','active','Medium','Medium','2025-04-17'],
+ ['Postman','dev','API testing','active','Low','Low','2025-02-13'],
+ ['Algolia','dev','Site search','active','Medium','Low','2025-05-27'],
+ ['Zapier','dev','Automation','active','Medium','Medium','2025-06-16'],
+ ['Retool','dev','Internal tools','active','Medium','Medium','2025-07-03'],
+ ['Anthropic','ai','AI model API','active','High','Medium','2025-08-10'],
+ ['OpenAI','ai','AI model API','active','High','Medium','2025-07-29'],
+ ['Together AI','ai','AI inference','active','Medium','Medium','2025-06-05'],
+ ['Replicate','ai','AI model hosting','active','Medium','Medium','2025-04-09'],
+ ['Pinecone','ai','Vector search','active','Medium','Medium','2025-05-15'],
+ ['Granola','ai','Meeting notes','active','Medium','Medium','2025-07-14'],
+ ['Airtable','collab','Databases and forms','inactive','Medium','Low','2024-12-02'],
+ ['Jasper','ai','AI writing','active','Low','Low','2025-03-12'],
+ ['Fireflies.ai','ai','Meeting notes','inactive','Medium','Medium','2024-11-05'],
+ ['Otter.ai','ai','Meeting transcription','active','Medium','Medium','2025-02-23'],
+ ['Salesforce','sales','CRM','active','High','Medium','2025-08-06'],
+ ['HubSpot','sales','Marketing CRM','active','Medium','Low','2025-06-27'],
+ ['Gong','sales','Call recording','active','High','Medium','2025-05-09'],
+ ['Outreach','sales','Sales engagement','active','Medium','Medium','2025-04-04'],
+ ['ZoomInfo','sales','Contact data','active','Medium','Medium','2025-03-28'],
+ ['Clari','sales','Revenue forecasting','active','Medium','Low','2025-01-30'],
+ ['Marketo','sales','Marketing email','active','Medium','Low','2025-06-20'],
+ ['Smartsheet','collab','Project tracking','inactive','Low','Low','2024-08-21'],
+ ['Iterable','sales','Lifecycle email','active','Medium','Low','2025-05-22'],
+ ['Customer.io','sales','Lifecycle email','active','Medium','Low','2025-04-25'],
+ ['Gainsight','sales','Customer health tracking','active','Medium','Medium','2025-07-09'],
+ ['Qualtrics','sales','Customer surveys','active','Medium','Low','2025-03-05'],
+ ['Lucidchart','collab','Diagramming','inactive','Low','Low','2024-09-30'],
+ ['Stripe','fin','Payments','active','High','Low','2025-08-03'],
+ ['Brex','fin','Corporate cards','active','Medium','Low','2025-06-11'],
+ ['Bill.com','fin','Vendor payments','active','Medium','Low','2025-05-16'],
+ ['NetSuite','fin','Accounting','active','High','Medium','2025-07-23'],
+ ['Coupa','fin','Procurement','active','Medium','Low','2025-04-11'],
+ ['Carta','fin','Equity records','active','Medium','Low','2025-02-06'],
+ ['Expensify','fin','Expense reporting','active','Low','Low','2025-01-09'],
+ ['Avalara','fin','Sales tax','active','Medium','Low','2025-03-21'],
+ ['Chargebee','fin','Subscription billing','active','Medium','Medium','2025-06-13'],
+ ['BambooHR','hr','Employee HR records','active','High','Medium','2025-07-28'],
+ ['Rippling','hr','Payroll','active','High','Medium','2025-06-02'],
+ ['Deel','hr','Contractor payments','active','Medium','Medium','2025-05-08'],
+ ['Freshworks','support','Support ticketing','active','Medium','Low','2025-04-19'],
+ ['Ashby','hr','Recruiting','inactive','Medium','Low','2024-10-22'],
+ ['Lattice','hr','Performance reviews','active','Medium','Low','2025-03-16'],
+ ['Gusto','hr','Payroll','inactive','Medium','Low','2024-12-10'],
+ ['Culture Amp','hr','Employee surveys','active','Low','Low','2025-02-27'],
+ ['Okta','sec','Employee single sign on','active','Critical','Medium','2025-08-15'],
+ ['Auth0','sec','Customer login','active','High','Medium','2025-07-19'],
+ ['1Password','sec','Password management','active','High','Low','2025-08-09'],
+ ['CrowdStrike','sec','Endpoint protection','active','High','Low','2025-06-25'],
+ ['Vanta','sec','Compliance evidence','active','Medium','Low','2025-07-06'],
+ ['Sift','sec','Fraud scoring','active','Medium','Medium','2025-04-30'],
+ ['Kandji','sec','Device management','active','Medium','Low','2025-05-29'],
+ ['Tailscale','sec','Network access','active','Medium','Low','2025-03-31'],
+ ['Snyk','sec','Dependency scanning','active','Medium','Low','2025-06-19'],
+ ['PagerDuty','dev','Incident alerting','active','Medium','Low','2025-07-15'],
+ ['Statuspage','dev','Status page','active','Low','Low','2025-02-17'],
+ ['DocuSign','fin','Contract signature','active','Medium','Low','2025-05-02']
+];
+
+/* Cloudflare's fourth parties: ~50, ~40 receive her customer data (support ticket content sits in
+   Cloudflare's Salesforce environment and its support tooling), ~10 are Cloudflare internal ops only. */
+const CF_YES = ['Amazon Web Services','Google Cloud','Microsoft Azure','Salesforce','Salesloft','Zendesk','Okta','Slack','Zoom',
+ 'Atlassian','Datadog','Snowflake','Segment','Twilio','SendGrid','PagerDuty','GitHub','Stripe','Gainsight','Tableau','Looker',
+ 'Fivetran','Databricks','Anthropic','OpenAI','Cohere','Pinecone','Intercom','HubSpot','Amplitude','Sentry','LaunchDarkly',
+ 'Elastic','Auth0','Box','Sumo Logic','Ada','Front','Algolia','Confluent'];
+const CF_NO = ['Workday','Greenhouse','Lever','Bill.com','NetSuite','Coupa','DocuSign','LinkedIn','Sprinklr','Qualtrics'];
+
+/* PagerDuty's fourth parties, curated so Salesloft is reachable through a second vendor.
+   PagerDuty uses Drift for website chat; none of Hannah's data to PagerDuty goes down that path. */
+const PD_YES = ['Amazon Web Services','Twilio','SendGrid','Slack','Datadog','Okta','Zendesk','Snowflake','Segment','Atlassian','GitHub'];
+const PD_NO  = ['Salesloft','Salesforce','Marketo','Workday','Greenhouse','DocuSign','NetSuite','Gong'];
+
+/* deterministic pseudo random per vendor so every reload is identical */
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){let x=seed||1;return()=>{x^=x<<13;x>>>=0;x^=x>>>17;x^=x<<5;x>>>=0;return (x%100000)/100000}}
+
+
+/* Long tail: real companies that in practice sit on one or two vendors' lists, grouped by what they are used for. */
+const TAIL_GROUPS = {
+ 'Email delivery':['Postmark','Mailgun','Mailjet','SparkPost','Brevo','Mailchimp','Klaviyo','ActiveCampaign','Campaign Monitor','Constant Contact','MailerLite','Drip','Vero','Loops','Attentive','Postscript','Braze','OneSignal','Knock','Courier','Novu','MagicBell'],
+ 'Messaging and voice':['Vonage','Bandwidth','Plivo','Sinch','MessageBird','Telnyx','Aircall','Dialpad','RingCentral','8x8','Talkdesk','Five9','Genesys','Pusher','Ably','Stream','Sendbird','Daily.co','Agora','Whereby'],
+ 'Product analytics':['Heap','FullStory','Hotjar','Pendo','LogRocket','Smartlook','Mouseflow','Contentsquare','PostHog','June','Kissmetrics','Woopra','Chartbeat','Snowplow','Statsig','Split','Optimizely','VWO','Eppo','Unleash','Flagsmith'],
+ 'Monitoring and logging':['New Relic','Splunk','Grafana Labs','Honeycomb','Chronosphere','Dynatrace','AppDynamics','Bugsnag','Rollbar','Raygun','Airbrake','Better Stack','Cronitor','Checkly','Pingdom','Uptime Robot','incident.io','FireHydrant','Rootly','Opsgenie'],
+ 'Databases and hosting':['PlanetScale','Neon','Supabase','CockroachDB','Timescale','ClickHouse','SingleStore','Aiven','ScyllaDB','DigitalOcean','Linode','Vultr','Hetzner','OVHcloud','Render','Fly.io','Railway','Heroku','Netlify','Cloudinary','Imgix','Mux','Wistia','Bunny.net','KeyCDN','Backblaze','Wasabi','Upstash','Turso','Xata'],
+ 'Security and fraud':['Imperva','Sucuri','DataDome','Kasada','Arkose Labs','HUMAN Security','hCaptcha','Forter','Riskified','Signifyd','Sardine','Unit21','Persona','Onfido','Jumio','Veriff','Alloy','Socure','Middesk','Semgrep','Veracode','Checkmarx','SonarSource','GitGuardian','Wiz','Orca Security','Lacework','Sysdig','Rapid7','Tenable','Qualys','SentinelOne','Huntress','Arctic Wolf','Expel','Red Canary','Doppler','HashiCorp','Bitwarden','Keeper','JumpCloud','Jamf','Twingate','Zscaler','Netskope'],
+ 'Identity':['FusionAuth','Clerk','Stytch','WorkOS','Frontegg','Descope','Ping Identity','OneLogin','Duo Security','Yubico'],
+ 'Payments and billing':['Adyen','Braintree','Checkout.com','Recurly','Zuora','Paddle','TaxJar','Anrok','Chargify','Maxio','Orb','Metronome','Lago','Plaid','Modern Treasury','Increase','Marqeta','Lithic','Tipalti','Melio','Airbase','Ramp','Navan','QuickBooks','Xero','Sage Intacct','Anaplan','Planful','Mosaic','Pigment'],
+ 'Data pipelines':['Airbyte','Stitch','Matillion','dbt Labs','Census','Hightouch','RudderStack','mParticle','Hevo','Estuary','Prefect','Dagster','Astronomer','Monte Carlo','Great Expectations','Atlan','Alation','Collibra','Mode','Sigma Computing','ThoughtSpot','Domo','Sisense','Qlik','Hex','Preset'],
+ 'Customer support':['Freshdesk','Help Scout','Gorgias','Kustomer','Gladly','Dixa','Missive','Hiver','Zoho Desk','HappyFox','Groove','Enchant','Crisp','Tidio','Drift','Qualified','Olark','LiveChat','Tawk.to','Forethought','Ultimate','Assembled','Playvox'],
+ 'Sales and marketing':['Outreach','Apollo','ZoomInfo','Clearbit','6sense','Demandbase','Bombora','Clay','Lusha','Seamless.AI','Chili Piper','SavvyCal','Cal.com','Vidyard','Wistia','Unbounce','Instapage','Webflow','WordPress VIP','Contentful','Sanity','Storyblok','Prismic','Typeform','SurveyMonkey','Tally','Jotform','Formstack','Semrush','Ahrefs','Moz','Hootsuite','Buffer','Sprout Social','Later','Canva','Figma','Lucidchart','Miro'],
+ 'Documents and signature':['PandaDoc','Dropbox Sign','Adobe Sign','Ironclad','Juro','LinkSquares','SpotDraft','Egnyte','ShareFile','WeTransfer','Notion','Coda','Slab','Guru','Document360','GitBook','ReadMe','Stoplight','Kong','Apigee','Tyk','MuleSoft','Boomi','Celigo','Merge','Finch','Nylas','Paragon','Prismatic','Rutter','Codat','Workato','Tray.io','Make','n8n'],
+ 'HR and payroll':['Remote','Oyster','Papaya Global','Justworks','TriNet','Namely','Personio','HiBob','15Five','Leapsome','Betterworks','Workable','SmartRecruiters','iCIMS','Jobvite','Checkr','Certn','Sterling','HireRight','GoodHire','Pave','Carta','Pulley','Gusto','Zenefits','Lattice','Culture Amp'],
+ 'Compliance and privacy':['Drata','Secureframe','Thoropass','Hyperproof','LogicGate','OneTrust','TrustArc','Osano','Transcend','DataGrail','Ketch','Didomi','Cookiebot','BigID','Very Good Security','Skyflow','Evervault','Basis Theory','Tonic.ai','Gretel'],
+ 'AI models and infrastructure':['Mistral AI','AssemblyAI','Deepgram','ElevenLabs','Speechmatics','Rev.ai','Hugging Face','Fireworks AI','Baseten','Modal','Anyscale','Weights & Biases','Weaviate','Qdrant','Chroma','LangChain','LlamaIndex','Cohere','Perplexity','Groq','Cerebras','Lambda','CoreWeave','RunPod'],
+ 'Video and media':['Vimeo','Frame.io','Descript','Riverside','Zencastr','Loom','Vidyard','Cloudflare Stream','Brightcove','JW Player','Kaltura','Panopto'],
+ 'Professional services':['Deloitte','PwC','KPMG','EY','Accenture','Slalom','Thoughtworks','EPAM','Globant','Toptal','Andela','Upwork','Fiverr','A-LIGN','Schellman','Prescient Assurance','Insight Assurance','Coalfire','NCC Group','Bishop Fox','Cobalt','HackerOne','Bugcrowd','Synack','Intigriti','Praetorian','Trail of Bits','Latacora','Kroll','Mandiant','CrowdStrike Services','Unit 42','Secureworks','Optiv','GuidePoint Security','Iron Mountain','Shred-it','Stericycle','ADP','Paychex','Paylocity','Paycom','Ceridian','UKG','Cornerstone','Docebo','TalentLMS','LinkedIn Learning','Coursera','Udemy Business','Pluralsight','Gong','Chorus','Clari','People.ai','Highspot','Seismic','Showpad','Mindtickle','Salesloft','Groove','Reply.io','Mixmax','Yesware','Lemlist','Instantly','Smartlead']
+};
+
+const TAIL=[]; const TAIL_USE={};
+Object.assign(TAIL_USE,{'Google Workspace':'Email and documents','Microsoft 365':'Email and documents','Figma':'Design','Miro':'Whiteboarding','Asana':'Project management','Linear':'Issue tracking','Vitally':'Customer success','ChurnZero':'Customer success','Airbase':'Spend management','Ramp':'Corporate cards','Checkr':'Background checks','Avalara':'Sales tax','Expensify':'Expense reporting','Kandji':'Device management','Jamf':'Device management','1Password':'Password management','CrowdStrike':'Endpoint protection','Snyk':'Dependency scanning','Drata':'Compliance automation','Secureframe':'Compliance automation','Wiz':'Cloud security','BambooHR':'Employee HR records','Ashby':'Recruiting','Lattice':'Performance reviews','Gusto':'Payroll','Outreach':'Sales engagement','ZoomInfo':'Contact data','Clearbit':'Contact enrichment','Clari':'Revenue forecasting','Chargebee':'Subscription billing','Braze':'Customer messaging','Klaviyo':'Marketing email','Notion':'Documentation','Culture Amp':'Employee surveys','Twingate':'Network access','Tailscale':'Network access','Postmark':'Transactional email','Mailgun':'Transactional email','Heap':'Product analytics','PostHog':'Product analytics','FullStory':'Session replay','Hotjar':'Session replay','Pendo':'Product analytics','Snowplow':'Event collection','New Relic':'Monitoring','Splunk':'Log analytics','Grafana Labs':'Monitoring','Honeycomb':'Observability','Bugsnag':'Error tracking','Rollbar':'Error tracking','Adyen':'Payments','Recurly':'Subscription billing','dbt Labs':'Data transformation','Mode':'Reporting','Hightouch':'Data activation','Census':'Data activation','Airbyte':'Data pipelines','AssemblyAI':'Speech to text','Deepgram':'Speech to text','ElevenLabs':'Voice generation','Freshdesk':'Support ticketing','Help Scout':'Support email','Chili Piper':'Meeting scheduling','Qualified':'Website chat','6sense':'Account intelligence','Apollo':'Contact data','SurveyMonkey':'Surveys','Typeform':'Forms','PlanetScale':'Database hosting','Supabase':'Database hosting','Neon':'Database hosting','Fly.io':'App hosting','Cloudinary':'Media hosting','Mux':'Video hosting','Netlify':'Web hosting','HashiCorp':'Infrastructure tooling','Persona':'Identity verification','Plaid':'Bank connections','JumpCloud':'Device and identity'});
+
+Object.entries(TAIL_GROUPS).forEach(([g,names])=>names.forEach(n=>{ if(!FP[n]&&!TAIL_USE[n]){TAIL.push(n);TAIL_USE[n]=g} }));
+/* Shared core: the names that realistically sit on most lists. */
+const CORE=['Amazon Web Services','Google Cloud','Microsoft Azure','Cloudflare','Salesforce','Zendesk','Okta','Slack','Zoom','Atlassian','Datadog','Snowflake','Segment','Twilio','SendGrid','Stripe','GitHub','Intercom','HubSpot','Marketo','Amplitude','Sentry','LaunchDarkly','Fivetran','Databricks','Anthropic','OpenAI','Workday','Greenhouse','DocuSign','NetSuite','Box','Dropbox','Vercel','Fastly','Akamai','Auth0','MongoDB','Redis','Confluent','Algolia','Zapier','Gainsight','Qualtrics','Tableau','Looker','Rippling','Deel','Brex','Bill.com','Coupa','Carta','Vanta','Sift','Sumo Logic','Elastic','Iterable','Customer.io','Mixpanel','Statuspage','Metabase','LinkedIn','Sprinklr','Lever','Cohere','Pinecone','Replicate','Together AI','Granola','Ada','Front','Calendly','Loom'];
+/* How widely each core name is shared: hyperscalers on most lists, the rest tapering off. */
+const CORE_P = n => ['Amazon Web Services','Google Cloud','Microsoft Azure'].includes(n)?0.55 : ['Cloudflare','Salesforce','Zendesk','Okta','Slack','Stripe','Twilio','SendGrid','Datadog','GitHub','Atlassian','Zoom'].includes(n)?0.28 : ['Snowflake','Segment','Intercom','HubSpot','Marketo','Amplitude','Sentry','Fivetran','Anthropic','OpenAI','Workday','DocuSign','NetSuite','Auth0','Vercel'].includes(n)?0.14 : 0.06;
+/* deterministic shuffle of the tail, dealt out so each name lands on one vendor, a few on two */
+const tailShuffled=(()=>{const r=rng(hash('tail'));const a=[...TAIL];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a})();
+let tailCursor=0;
+
+/* Realistic assignment: each vendor draws from the slots a SaaS company actually fills.
+   [name, probability, receivesCustomerData]. Hyperscalers and the big SaaS names are shared widely,
+   small tools by a handful of vendors. Internal ops tools (HR, finance, recruiting) never carry her data. */
+const SLOTS = {
+ hosting:[['Amazon Web Services',.62,true],['Google Cloud',.30,true],['Microsoft Azure',.18,true]],
+ edge:[['Cloudflare',.45,true],['Fastly',.12,true],['Akamai',.07,true],['Vercel',.10,true],['Netlify',.05,true]],
+ support:[['Zendesk',.42,true],['Intercom',.30,true],['Freshdesk',.06,true],['Help Scout',.06,true],['Front',.05,true],['Ada',.04,true]],
+ crm:[['Salesforce',.58,true],['HubSpot',.30,true]],
+ txemail:[['SendGrid',.40,true],['Postmark',.14,true],['Mailgun',.10,true],['Twilio',.28,true]],
+ mktg:[['Marketo',.18,true],['Customer.io',.12,true],['Iterable',.08,true],['Braze',.08,true],['Klaviyo',.04,true],['Mailchimp',.08,true]],
+ analytics:[['Segment',.40,true],['Amplitude',.32,true],['Mixpanel',.24,true],['Heap',.07,true],['PostHog',.08,true],['FullStory',.14,true],['Hotjar',.10,true],['Pendo',.08,true],['Snowplow',.04,true]],
+ monitoring:[['Datadog',.50,true],['Sentry',.45,true],['New Relic',.12,true],['Splunk',.08,true],['Sumo Logic',.07,true],['Grafana Labs',.06,true],['Honeycomb',.04,true],['PagerDuty',.35,false],['LaunchDarkly',.20,false],['Statuspage',.22,false],['Bugsnag',.04,true],['Rollbar',.04,true]],
+ identity:[['Okta',.38,false],['Auth0',.18,true],['1Password',.28,false],['JumpCloud',.05,false]],
+ payments:[['Stripe',.55,true],['Adyen',.05,true],['Chargebee',.08,true],['Recurly',.04,true],['Avalara',.10,true],['Bill.com',.15,false],['NetSuite',.30,false],['Brex',.18,false],['Ramp',.14,false],['Expensify',.14,false],['Coupa',.08,false],['Airbase',.05,false]],
+ data:[['Snowflake',.35,true],['Databricks',.14,true],['Fivetran',.22,true],['dbt Labs',.14,true],['Looker',.14,true],['Tableau',.14,true],['Mode',.06,true],['Metabase',.10,true],['Hightouch',.06,true],['Census',.05,true],['Airbyte',.05,true]],
+ ai:[['OpenAI',.50,true],['Anthropic',.34,true],['Cohere',.05,true],['Pinecone',.10,true],['AssemblyAI',.05,true],['Deepgram',.05,true],['ElevenLabs',.03,true],['Together AI',.04,true],['Replicate',.04,true]],
+ collab:[['Slack',.68,true],['Zoom',.50,false],['Google Workspace',.48,true],['Microsoft 365',.28,true],['Atlassian',.50,true],['GitHub',.52,false],['Notion',.34,false],['Loom',.10,false],['Calendly',.16,false],['DocuSign',.34,false],['Box',.12,false],['Dropbox',.16,false],['Miro',.10,false],['Figma',.18,false],['Asana',.14,false],['Linear',.10,false]],
+ people:[['Workday',.24,false],['Rippling',.20,false],['Gusto',.14,false],['Deel',.15,false],['Greenhouse',.30,false],['Lever',.14,false],['Ashby',.10,false],['BambooHR',.14,false],['Lattice',.10,false],['Carta',.16,false],['LinkedIn',.30,false],['Culture Amp',.06,false],['Checkr',.08,false]],
+ sales:[['Gong',.18,true],['Outreach',.14,true],['ZoomInfo',.20,false],['Clearbit',.14,true],['6sense',.10,false],['Apollo',.08,false],['Chili Piper',.08,true],['Qualified',.04,true],['Clari',.08,false]],
+ security:[['Vanta',.28,false],['Drata',.18,false],['Secureframe',.08,false],['CrowdStrike',.24,false],['Snyk',.14,false],['Wiz',.08,false],['Kandji',.10,false],['Jamf',.10,false],['Tailscale',.06,false],['Sift',.05,true],['Persona',.05,true],['Plaid',.05,true]],
+ cs:[['Gainsight',.14,true],['Qualtrics',.10,true],['SurveyMonkey',.08,true],['Typeform',.10,true],['Vitally',.04,true],['ChurnZero',.04,true]],
+ infra:[['Confluent',.10,true],['Redis',.18,true],['MongoDB',.18,true],['Elastic',.16,true],['Algolia',.12,true],['PlanetScale',.05,true],['Supabase',.05,true],['Neon',.04,true],['Fly.io',.05,true],['Cloudinary',.08,true],['Mux',.04,true],['Twingate',.04,false],['HashiCorp',.08,false]]
+};
+const SLOTS_NAMES=new Set(Object.values(SLOTS).flat().map(x=>x[0]));
+const VENDORS = V.map(function(r,i){
+ const [name,cat,line,status,inh,res,last]=r;
+ let fps;
+ if(name==='Cloudflare') fps = CF_YES.map(n=>({n,data:true})).concat(CF_NO.map(n=>({n,data:false})));
+ else if(name==='PagerDuty') fps = PD_YES.map(n=>({n,data:true})).concat(PD_NO.map(n=>({n,data:false})));
+ else {
+   const r=rng(hash(name)); fps=[];
+   const add=(n,data)=>{ if(n!==name && !fps.some(f=>f.n===n)) fps.push({n,data}) };
+   // every SaaS vendor runs on a hyperscaler; infrastructure vendors sometimes on two
+   const hs=SLOTS.hosting; const pick=hs[r()<.62?0:r()<.6?1:2]; add(pick[0],true);
+   if(cat==='infra' && r()<.35) add(hs[(hs.indexOf(pick)+1)%3][0],true);
+   // more engineering heavy vendors carry more infra and data tooling; sales and marketing vendors carry more go to market tooling
+   const boost = k => (k==='infra'||k==='data'||k==='monitoring') ? (cat==='infra'||cat==='data'||cat==='dev'||cat==='ai' ? 1.6 : 0.7)
+                    : (k==='sales'||k==='mktg'||k==='crm') ? (cat==='sales' ? 1.6 : 0.8)
+                    : k==='ai' ? (cat==='ai' ? 1.8 : 1) : 1;
+   Object.entries(SLOTS).forEach(([k,list])=>{ if(k==='hosting')return; list.forEach(([n,p,data])=>{ if(r()<Math.min(p*0.55*boost(k),0.9)) add(n,data) }) });
+   // the long tail: smaller tools this vendor mostly has to itself, with data flow set by what kind of tool it is
+   const TAIL_DATA={'Email delivery':true,'Messaging and voice':true,'Product analytics':true,'Monitoring and logging':true,'Databases and hosting':true,'Security and fraud':false,'Identity':true,'Payments and billing':true,'Data pipelines':true,'Customer support':true,'Sales and marketing':true,'Documents and signature':false,'HR and payroll':false,'Compliance and privacy':false,'AI models and infrastructure':true,'Video and media':false,'Professional services':false};
+   const k = cat==='infra'||cat==='data'||cat==='sales' ? 4+Math.floor(r()*5) : 2+Math.floor(r()*4);
+   for(let j=0;j<k;j++){ const n=tailShuffled[(tailCursor++)%tailShuffled.length]; if(!SLOTS_NAMES.has(n)) add(n, TAIL_DATA[TAIL_USE[n]]!==false) }
+ }
+ fps.sort((a,b)=>(a.data===b.data?0:a.data?-1:1)||a.n.localeCompare(b.n));
+ const added=rng(hash(name+'d'));
+ fps.forEach(f=>{const m=1+Math.floor(added()*8);const d=1+Math.floor(added()*28);f.added=`2025-0${m}-${String(d).padStart(2,'0')}`});
+ return {id:name.toLowerCase().replace(/[^a-z0-9]+/g,'-'),name,cat,line,status,inh,res,last,fps,
+   assessments:1+Math.floor(rng(hash(name+'a'))()*4),docs:2+Math.floor(rng(hash(name+'x'))()*9)};
+});
+const byId = Object.fromEntries(VENDORS.map(v=>[v.id,v]));
+function vendorsUsing(fp){return VENDORS.filter(v=>v.fps.some(f=>f.n===fp))}
+function dataTypesTo(vendor){return DATA_BY_CAT[vendor.cat]||DATA_BY_CAT.collab}
+</script>
+<script>
+/* guaranteed chains the threads depend on */
+function ensureFp(vendorName,fp,data,added){const v=VENDORS.find(x=>x.name===vendorName);if(!v)return;
+ const e=v.fps.find(f=>f.n===fp); if(e){e.data=data;if(added)e.added=added}else v.fps.push({n:fp,data,added:added||'2025-03-04'});}
+ensureFp('Okta','Twilio',true,'2025-01-22');
+ensureFp('Datadog','Anthropic',true,'2025-08-12');
+ensureFp('Cloudflare','Gainsight',true,'2025-02-09');
+ensureFp('Jasper','Replicate',true,'2025-03-30');
+VENDORS.forEach(v=>v.fps.sort((a,b)=>(a.data===b.data?0:a.data?-1:1)||a.n.localeCompare(b.n)));
+
+/* ---------- Salesloft thread, verbatim ---------- */
+const SL = {
+ rows:{
+  0:{date:'Aug 20',meta:['via Cloudflare','Salesloft trust center','In your supply chain','No data named yet']},
+  3:{date:'Aug 23',meta:['via Cloudflare','Cloudflare disclosure','2 updates','Your Cloudflare environment in scope','No data named yet']},
+  6:{date:'Aug 26',meta:['via Cloudflare','Cloudflare disclosure','3 updates','Your Cloudflare environment in scope','Named data matches what you send']}
+ },
+ msgs:[
+  {day:0,title:'Day 0 — August 20',src:'Source: Salesloft trust center, public post. Retrieved Aug 20. Cloudflare has not been notified and has not posted anything.',
+   saidBy:'What Salesloft said:',
+   quote:'Today, we detected a security issue in the Drift application. Out of an abundance of caution, we have proactively revoked connections between Drift and Salesforce, and we are asking Drift admins to re-authenticate their Salesforce connection. Please note that the above referenced issue does not impact any Drift customers who do not integrate with Salesforce. We are continuing to investigate and will provide more information as it becomes available.',
+   sections:[
+    ['Why you’re seeing this',['Salesloft is a subprocessor of Cloudflare. Drift is a Salesloft product, acquired in 2024. Cloudflare has Drift connected to its Salesforce environment.'],'Your data → Cloudflare → Salesloft'],
+    ['How this overlaps with you',['Salesloft is in your supply chain, reached through Cloudflare. Cloudflare’s subprocessor list, maintained through Conveyor and last updated Aug 19, names Salesloft.','You send support ticket content to Cloudflare, which your engineers use for config, logs, and occasionally API tokens.','Salesloft has not named the data involved, so there is nothing yet to compare against what you send down this path.']],
+    ['Where this stands as of Aug 20',['The affected company is in your chain. Nothing beyond that has been disclosed. This will change as Salesloft and Cloudflare say more.']],
+    ['What is not known',['Whether any data left Salesloft. Whether Cloudflare’s environment was in scope. Whether any of your data was involved.']]
+   ]},
+  {day:3,title:'Day 3 — August 23',src:'Source: Cloudflare, disclosed to customers through Conveyor. Posted Aug 23. Cloudflare was notified by Salesforce and Salesloft on Aug 23.',
+   saidBy:'What Cloudflare said:',
+   quote:'We were notified on August 23 of a security incident affecting Salesloft Drift, which we use as a connected application in our Salesforce environment. We have disabled the integration and begun an investigation. We will update this notice as we learn what data, if any, was accessed.',
+   fic:'(Written for this prototype. Not a real Cloudflare post.)',
+   sections:[
+    ['What changed',['Cloudflare has confirmed its own environment used the affected integration, and is treating this as an incident.']],
+    ['How this overlaps with you',['Beyond Salesloft sitting in your chain, the specific Cloudflare environment your data passes through is now in scope. Your support ticket content is held in that Salesforce environment.','No data types have been named by anyone, so there is still nothing to compare.']],
+    ['Where this stands as of Aug 23',['More of your path is in scope than was known on Aug 20. Still nothing disclosed about what data was involved.']],
+    ['What is not known',['What was accessed, and whether anything was taken from Cloudflare’s tenant.']]
+   ]},
+  {day:6,title:'Day 6 — August 26',src:'Source: Cloudflare, disclosed to customers through Conveyor. Posted Aug 26, citing Salesloft findings shared with Cloudflare.',
+   saidBy:'What Cloudflare said:',
+   quote:'Salesloft has confirmed that between August 8 and August 18 a threat actor used stolen OAuth credentials to exfiltrate data from Salesforce instances connected to Drift, querying Case, Account, User and Opportunity objects. Our Salesforce tenant was connected to Drift. Support case content is held in these objects. We are working to determine what was taken from our tenant.',
+   fic:'(Written for this prototype. Not a real Cloudflare post.)',
+   sections:[
+    ['What changed',['Data types have been named for the first time.']],
+    ['How this overlaps with you',['Salesloft is in your chain. Cloudflare’s Salesforce environment was connected to Drift.','The disclosure names Case objects, which hold support case content. You send support ticket content to Cloudflare. These match.']],
+    ['Where this stands as of Aug 26',['Every piece disclosed so far points down your path. Had the named data types not matched what you send to Cloudflare, this would be less likely to involve you. It would not close the question, since later disclosures can widen scope.']],
+    ['What is not known',['Whether anything was taken from Cloudflare’s tenant specifically, and which records. Cloudflare is still investigating.']]
+   ]},
+  {day:13,title:'Day 13 \u2014 September 2',src:'Source: Cloudflare security blog, public post. Posted Sep 2.',
+   saidBy:'What Cloudflare said:',
+   quote:'Between August 12 and August 17 the threat actor used the compromised Salesloft Drift integration to access our Salesforce instance and exfiltrate support case data, including the text of support cases. Most of that text is customer contact information and the subject and body of support requests. Because customers sometimes share sensitive information in support cases, we are treating that data as compromised. We identified Cloudflare API tokens in the case data and rotated them, and found no suspicious activity associated with them. We are notifying affected customers directly.',
+   sections:[
+    ['What changed',['Cloudflare has confirmed that support case content was taken from its own tenant, including the text of cases, and has begun notifying affected customers directly.']],
+    ['How this overlaps with you',['The data confirmed taken is support case content from Cloudflare\u2019s tenant. You send support ticket content to Cloudflare, which your engineers use for config, logs, and occasionally API tokens.','If any of your tickets were open between Aug 12 and Aug 17, they were in the set that was taken. Cloudflare says it will tell affected customers directly.']],
+    ['Where this stands as of Sep 2',['Confirmed. Support case content left Cloudflare\u2019s tenant. Whether your specific tickets were included is what Cloudflare\u2019s direct notice will say.']],
+    ['What is not known',['Which customers\u2019 cases were included, and what was in them.']]
+   ]}
+ ]
+};
+
+/* ---------- threads ----------
+ depth: 'vendor' | 'fourth' | 'outside'   found: 'public' | 'private' | 'conventional'
+ involved: true = reaches her through a vendor and a data flow */
+const F = {public:'Public but unnoticed',private:'Privately disclosed',conventional:'Conventionally disclosed'};
+const THREADS = [
+ {id:'salesloft',involved:true,depth:'fourth',type:'Confirmed breach',found:'conventional',about:'Salesloft',via:['Cloudflare'],
+  subject:'Salesloft reports a security issue in Drift',special:true,sort:'2025-08-20'},
+
+ {id:'dd-anthropic',involved:true,depth:'fourth',type:'Subprocessor list change, no announcement',found:'public',about:'Anthropic',via:['Datadog'],
+  date:'Aug 12',sort:'2025-08-12',subject:'Datadog added Anthropic to its subprocessor list',
+  meta:['via Datadog','Subprocessor list diff','In your supply chain','Data flow not yet disclosed'],
+  src:'Source: Datadog subprocessor list, public page. Change detected Aug 12 by comparing against the copy retrieved Aug 5. Datadog has not announced the change.',
+  said:'The entry reads: Anthropic, PBC. Purpose: AI features. Location: United States. No notice was sent to customers.',
+  sec:[['Why you’re seeing this',['Anthropic now appears on Datadog’s subprocessor list. Datadog is your vendor. You send configuration and logs to Datadog.'],'Your data → Datadog → Anthropic'],
+       ['How this overlaps with you',['Anthropic is now in your supply chain, reached through Datadog.','Datadog has not said which data reaches Anthropic or which features use it, so there is nothing yet to compare against what you send.']],
+       ['Where this stands as of Aug 12',['A new company is in your chain. Whether any of your data flows to it is not yet disclosed.']]]},
+
+ {id:'segment-log',involved:true,depth:'vendor',type:'Data leak',found:'private',about:'Segment',via:['Segment'],
+  date:'Aug 6',sort:'2025-08-06',subject:'Segment discloses event payloads written to an internal debug log',
+  meta:['Segment','Customer disclosure through Conveyor','Your vendor','Named data matches what you send'],
+  src:'Source: Segment (Twilio), disclosed to customers through Conveyor. Posted Aug 6. Not published on the public trust center.',
+  said:'Between July 24 and August 2 a logging change caused a subset of inbound event payloads to be written in full to an internal debug log accessible to engineering staff. The log has been purged. We have no indication of access outside Segment.',fic:true,
+  sec:[['Why you’re seeing this',['Segment is your vendor. Your contract obligates Segment to disclose incidents to you through Conveyor.'],'Your data → Segment'],
+       ['How this overlaps with you',['The disclosure names inbound event payloads. You send product usage events and customer account identifiers to Segment. These match.','Segment has not said which customers’ payloads were in the subset.']],
+       ['Where this stands as of Aug 6',['The data type named matches what you send. Whether your events were in the affected subset has not been disclosed.']]]},
+
+ {id:'gainsight-ai',involved:true,depth:'fourth',type:'Fourth party begins using AI on data it receives',found:'public',about:'Gainsight',via:['Cloudflare'],
+  date:'Jul 30',sort:'2025-07-30',subject:'Gainsight enables AI summaries across customer records',
+  meta:['via Cloudflare','Gainsight trust center edit','In your supply chain','Ambiguous whether customer content is used'],
+  src:'Source: Gainsight trust center, AI and data use page. Edit detected Jul 30 by comparing against the copy retrieved Jul 16. No announcement to customers.',
+  said:'The page now states that customer success records, including synced support cases, may be processed by third party AI models to generate account summaries. The previous version did not mention AI processing.',fic:true,
+  sec:[['Why you’re seeing this',['Gainsight is a subprocessor of Cloudflare. Cloudflare syncs support cases into Gainsight for account health tracking.'],'Your data → Cloudflare → Gainsight'],
+       ['How this overlaps with you',['Your support ticket content reaches Gainsight through Cloudflare.','The edit says synced support cases may be processed by AI models. It does not say which accounts, or whether Cloudflare has enabled the feature.']],
+       ['Where this stands as of Jul 30',['A company that receives your data has changed how it may process it. Whether that applies to Cloudflare’s account is not disclosed.']]]},
+
+ {id:'twilio-sms',involved:true,depth:'fourth',type:'Outage',found:'public',about:'Twilio',via:['Okta'],
+  date:'Jul 22',sort:'2025-07-22',subject:'Twilio SMS delivery degraded for six hours',
+  meta:['via Okta','Twilio status page','In your supply chain','Named data matches what you send'],
+  src:'Source: Twilio status page, public. Incident opened Jul 22 04:10 UTC, resolved 10:25 UTC. Not sent to customers.',
+  said:'Degraded SMS delivery to North American carriers. Messages were queued and delivered late; a subset were dropped.',fic:true,
+  sec:[['Why you’re seeing this',['Twilio is a subprocessor of Okta. Okta uses Twilio to deliver SMS one time codes.'],'Your data → Okta → Twilio'],
+       ['How this overlaps with you',['Your employees’ phone numbers reach Twilio through Okta for SMS factors.','The incident names delivery, not data. Some of your sign in codes during the window were late or did not arrive.']],
+       ['Where this stands as of Jul 22',['A company in your chain had a delivery outage on a path your data uses. No data exposure has been described.']]]},
+
+ {id:'replicate-soc2',involved:true,depth:'vendor',type:'Certification lapse',found:'public',about:'Replicate',via:['Replicate'],
+  date:'Jul 15',sort:'2025-07-15',subject:'Replicate SOC 2 report period ended, no new report posted',
+  meta:['Replicate','Replicate trust center','Your vendor','No data named'],
+  src:'Source: Replicate trust center. The most recent SOC 2 Type II report covers a period ending Jun 30. Checked Jul 15, nothing newer posted.',
+  said:'No statement from Replicate. The trust center still shows the report covering the period ending Jun 30.',
+  sec:[['Why you’re seeing this',['Replicate is your vendor. You send prompts and model inputs to Replicate.'],'Your data → Replicate'],
+       ['How this overlaps with you',['This is not an incident. It is a gap in evidence. A report covering the current period may be in progress and not yet published.']],
+       ['Where this stands as of Jul 15',['Two weeks past the end of the last audited period, with nothing new posted.']]]},
+
+ {id:'atlassian-cve',involved:true,depth:'vendor',type:'Moderate severity vulnerability, patched quietly',found:'public',about:'Atlassian',via:['Atlassian'],
+  date:'Jun 26',sort:'2025-06-26',subject:'Atlassian patches a moderate severity issue in Jira Cloud',
+  meta:['Atlassian','Jira Cloud changelog','Your vendor','No data named'],
+  src:'Source: Atlassian Cloud changelog, public. Entry dated Jun 26. No security bulletin and no customer email.',
+  said:'Fixed an issue where issue attachments could be retrieved by a user with view permission on a different project under specific configuration conditions.',fic:true,
+  sec:[['Why you’re seeing this',['Atlassian is your vendor. You keep issue tracking, including attachments, in Jira Cloud.'],'Your data → Atlassian'],
+       ['How this overlaps with you',['The fix describes cross project attachment access under specific configurations. Atlassian has not said which configurations or whether any access occurred.']],
+       ['Where this stands as of Jun 26',['Patched before it was described. Nothing disclosed about exposure.']]]},
+
+ /* ---------- not involved ---------- */
+ {id:'workday',involved:false,depth:'fourth',type:'Confirmed breach',found:'conventional',about:'Workday',via:['Cloudflare','PagerDuty'],
+  date:'Aug 15',sort:'2025-08-15',subject:'Workday reports access to a third party CRM through social engineering',
+  meta:['Workday blog','Fourth party of Cloudflare and PagerDuty','Business contact details named'],
+  reason:'Workday is a subprocessor of Cloudflare and of PagerDuty, for their own HR records. Neither sends any of your data to Workday.',
+  src:'Source: Workday blog, public post, Aug 15.',said:'Workday reported that a threat actor gained access to a third party CRM platform through social engineering, obtaining business contact information such as names, email addresses and phone numbers. Workday stated there is no indication of access to customer tenants.',
+  sec:[['Why this does not reach you',['Workday sits in your chain twice, as a subprocessor of Cloudflare and of PagerDuty, and both use it for their own employee HR records.','Neither Cloudflare nor PagerDuty sends any of your data to Workday, based on the data flows each disclosed.']],
+       ['Where this stands as of Aug 15',['In your chain, but on paths that carry none of your data.']]]},
+
+ {id:'google-sf',involved:false,depth:'vendor',type:'Confirmed breach',found:'conventional',about:'Google',via:['Google Cloud','Google Workspace'],
+  date:'Aug 5',sort:'2025-08-05',subject:'Google reports access to a corporate Salesforce instance',
+  meta:['Google Threat Intelligence blog','Your vendor','Business contact details named'],
+  reason:'The system named is Google’s own sales CRM for advertising customers. It is not part of Google Cloud or Google Workspace, which are the environments your data passes through.',
+  src:'Source: Google Threat Intelligence Group blog, public post, Aug 5.',said:'Google reported that one of its corporate Salesforce instances, used to store contact information for small and medium business advertising customers, was accessed. The data was described as basic and largely publicly available business information.',
+  sec:[['Why this does not reach you',['Google Cloud and Google Workspace are your vendors. The system named is Google’s internal sales CRM for advertising customers.','Your data passes through Google Cloud and Google Workspace. Google has stated those environments were not the system accessed.']],
+       ['Where this stands as of Aug 5',['Your vendor, but not the environment your data is in.']]]},
+
+ {id:'afklm',involved:false,depth:'outside',type:'Confirmed breach',found:'conventional',about:'Air France KLM',
+  date:'Aug 7',sort:'2025-08-07',subject:'Air France and KLM report access to customer data through a third party platform',
+  meta:['Air France KLM press notice','Not in your supply chain','Contact details named'],
+  reason:'Air France KLM is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Air France KLM customer notice, public, Aug 7.',said:'The airlines reported unauthorized access to a third party customer service platform, exposing names, contact details and loyalty programme information.',
+  sec:[['Why this does not reach you',['Air France KLM is not one of your vendors and does not appear on any of your vendors’ subprocessor lists.','The third party platform named has not been identified publicly. If it is later named and it is in your chain, this thread will update.']],
+       ['Where this stands as of Aug 7',['Outside your chain as disclosed so far.']]]},
+
+ {id:'pandora',involved:false,depth:'outside',type:'Confirmed breach',found:'conventional',about:'Pandora',
+  date:'Aug 5',sort:'2025-08-05',subject:'Pandora reports customer contact data accessed through a third party platform',
+  meta:['Pandora customer email','Not in your supply chain','Contact details named'],
+  reason:'Pandora is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Pandora customer email, reported publicly Aug 5.',said:'Pandora told customers that names and email addresses were accessed through a third party platform it uses. No passwords or payment data were involved.',
+  sec:[['Why this does not reach you',['Pandora is not in your chain.','The third party platform has not been named.']],['Where this stands as of Aug 5',['Outside your chain.']]]},
+
+ {id:'chanel',involved:false,depth:'outside',type:'Confirmed breach',found:'conventional',about:'Chanel',
+  date:'Aug 1',sort:'2025-08-01',subject:'Chanel reports customer data accessed at a third party database provider',
+  meta:['Chanel notice','Not in your supply chain','Contact details named'],
+  reason:'Chanel is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Chanel customer notice, public, Aug 1.',said:'Chanel reported that a database hosted by a third party service provider was accessed on Jul 25, exposing names, email addresses, phone numbers and mailing addresses of some US clients.',
+  sec:[['Why this does not reach you',['Chanel is not in your chain, and the provider has not been named.']],['Where this stands as of Aug 1',['Outside your chain.']]]},
+
+ {id:'allianz',involved:false,depth:'outside',type:'Confirmed breach',found:'conventional',about:'Allianz Life',
+  date:'Jul 26',sort:'2025-07-26',subject:'Allianz Life reports access to a third party CRM',
+  meta:['State regulator filing','Not in your supply chain','Personal data named'],
+  reason:'Allianz Life is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Breach notification filed with the Maine Attorney General, public, Jul 26.',said:'Allianz Life reported that on Jul 16 a threat actor used social engineering to access a third party cloud CRM system, obtaining personal data of the majority of its US customers, financial professionals and some employees.',
+  sec:[['Why this does not reach you',['Allianz Life is not in your chain.']],['Where this stands as of Jul 26',['Outside your chain.']]]},
+
+ {id:'sharepoint',involved:false,depth:'vendor',type:'Unpatched vulnerability',found:'conventional',about:'Microsoft',via:['Microsoft 365','Microsoft Azure'],
+  date:'Jul 19',sort:'2025-07-19',subject:'Microsoft confirms active exploitation of on premises SharePoint Server',
+  meta:['Microsoft Security Response Center','Your vendor','Affects self hosted SharePoint only'],
+  reason:'The vulnerability affects SharePoint Server run on customers’ own infrastructure. Microsoft 365 and Azure, where your data is, are stated not to be affected.',
+  src:'Source: Microsoft Security Response Center, public advisory, Jul 19, updated Jul 20.',said:'Microsoft confirmed active attacks against on premises SharePoint Server customers exploiting a vulnerability, and stated that SharePoint Online in Microsoft 365 was not affected. A patch was not yet available for all versions at the time of the advisory.',
+  sec:[['Why this does not reach you',['Microsoft 365 and Microsoft Azure are your vendors. The affected product is SharePoint Server installed on customers’ own servers.','Microsoft states SharePoint Online, which is where your Microsoft 365 documents are held, is not affected.']],['Where this stands as of Jul 19',['Your vendor, but a product you do not use and an environment your data is not in.']]]},
+
+ {id:'citrix',involved:false,depth:'outside',type:'Unpatched vulnerability',found:'conventional',about:'Citrix',
+  date:'Jul 7',sort:'2025-07-07',subject:'Citrix NetScaler vulnerability under active exploitation',
+  meta:['Citrix security bulletin','Not in your supply chain','No customer data named'],
+  reason:'Citrix is not one of your vendors and does not appear on any of your vendors’ subprocessor lists.',
+  src:'Source: Citrix security bulletin, public, updated Jul 7.',said:'Citrix confirmed exploitation of a memory overread vulnerability in NetScaler ADC and Gateway that can expose session tokens. Patches were available; many appliances remained unpatched.',
+  sec:[['Why this does not reach you',['Citrix is not in your chain. None of your vendors list Citrix as a subprocessor, and none have disclosed using NetScaler in the environments your data passes through.']],['Where this stands as of Jul 7',['Outside your chain as disclosed so far.']]]},
+
+ {id:'qantas',involved:false,depth:'outside',type:'Confirmed breach',found:'conventional',about:'Qantas',
+  date:'Jul 2',sort:'2025-07-02',subject:'Qantas reports customer data accessed through a third party contact centre platform',
+  meta:['Qantas media statement','Not in your supply chain','Contact details named'],
+  reason:'Qantas is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Qantas media statement, public, Jul 2.',said:'Qantas reported that a third party customer servicing platform used by one of its contact centres was accessed, affecting records for about six million customers, including names, email addresses, phone numbers and frequent flyer numbers.',
+  sec:[['Why this does not reach you',['Qantas is not in your chain, and the platform has not been named.']],['Where this stands as of Jul 2',['Outside your chain.']]]},
+
+ {id:'lv',involved:false,depth:'outside',type:'Confirmed breach',found:'conventional',about:'Louis Vuitton',
+  date:'Jul 2',sort:'2025-07-02',subject:'Louis Vuitton reports unauthorized access to customer data',
+  meta:['Louis Vuitton customer notice','Not in your supply chain','Contact details named'],
+  reason:'Louis Vuitton is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Louis Vuitton customer notice, public, Jul 2.',said:'Louis Vuitton reported that an unauthorized third party accessed systems holding customer names, contact details and purchase history. No payment data was involved.',
+  sec:[['Why this does not reach you',['Louis Vuitton is not in your chain.']],['Where this stands as of Jul 2',['Outside your chain.']]]},
+
+ {id:'aflac',involved:false,depth:'outside',type:'Confirmed breach',found:'conventional',about:'Aflac',
+  date:'Jun 20',sort:'2025-06-20',subject:'Aflac reports intrusion through social engineering',
+  meta:['Aflac SEC filing','Not in your supply chain','Personal data named'],
+  reason:'Aflac is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Aflac Form 8-K, public, Jun 20.',said:'Aflac reported that it identified suspicious activity on Jun 12 and stopped the intrusion within hours. Files potentially accessed contained claims information, health information, social security numbers and other personal data.',
+  sec:[['Why this does not reach you',['Aflac is not in your chain.']],['Where this stands as of Jun 20',['Outside your chain.']]]},
+
+ {id:'tableau',involved:false,depth:'fourth',type:'Moderate severity vulnerability, patched quietly',found:'public',about:'Tableau',via:['Cloudflare'],
+  date:'Jul 24',sort:'2025-07-24',subject:'Tableau publishes fixes for a moderate severity issue in Tableau Server',
+  meta:['Tableau security bulletin','Fourth party of Cloudflare','No customer data named'],
+  reason:'Tableau is a subprocessor of Cloudflare for internal reporting. Cloudflare sends none of your data to Tableau.',
+  src:'Source: Tableau security bulletin, public, Jul 24. No customer notice.',said:'Salesforce published a bulletin describing a moderate severity vulnerability in Tableau Server that could allow an authenticated user to read data outside their permission scope under certain configurations. Fixes were released in the same bulletin.',
+  sec:[['Why this does not reach you',['Tableau is on Cloudflare’s subprocessor list for internal business reporting.','Cloudflare sends none of your data to Tableau, based on the data flows it disclosed Aug 19.']],['Where this stands as of Jul 24',['In your chain, on a path that carries none of your data.']]]},
+
+ {id:'lever-ai',involved:false,depth:'fourth',type:'Fourth party begins using AI on data it receives',found:'public',about:'Lever',via:['Cloudflare'],
+  date:'Jul 17',sort:'2025-07-17',subject:'Lever adds AI candidate screening across customer accounts',
+  meta:['Lever product changelog','Fourth party of Cloudflare','Candidate data named'],
+  reason:'Lever is a subprocessor of Cloudflare for recruiting. Cloudflare sends none of your data to Lever.',
+  src:'Source: Lever product changelog, public, Jul 17.',said:'Lever announced AI assisted candidate screening, enabled by default, which processes resumes and application responses to produce a fit summary for recruiters.',fic:true,
+  sec:[['Why this does not reach you',['Lever is on Cloudflare’s subprocessor list for Cloudflare’s own recruiting.','None of your data goes from Cloudflare to Lever.']],['Where this stands as of Jul 17',['In your chain, on a path that carries none of your data.']]]},
+
+ {id:'sprinklr-iso',involved:false,depth:'fourth',type:'Certification lapse',found:'public',about:'Sprinklr',via:['Cloudflare'],
+  date:'Jul 9',sort:'2025-07-09',subject:'Sprinklr ISO 27001 certificate expiry date passed on its trust center',
+  meta:['Sprinklr trust center','Fourth party of Cloudflare','No data named'],
+  reason:'Sprinklr is a subprocessor of Cloudflare for social media management. Cloudflare sends none of your data to Sprinklr.',
+  src:'Source: Sprinklr trust center. The ISO 27001 certificate shown lists an expiry of Jun 30. Checked Jul 9, no renewed certificate posted.',said:'No statement from Sprinklr.',
+  sec:[['Why this does not reach you',['Sprinklr is on Cloudflare’s subprocessor list for Cloudflare’s marketing.','None of your data goes from Cloudflare to Sprinklr.']],['Where this stands as of Jul 9',['A gap in evidence at a company on a path that carries none of your data.']]]},
+
+ {id:'greenhouse-outage',involved:false,depth:'fourth',type:'Outage',found:'public',about:'Greenhouse',via:['Cloudflare','PagerDuty'],
+  date:'Jun 30',sort:'2025-06-30',subject:'Greenhouse candidate portal unavailable for five hours',
+  meta:['Greenhouse status page','Fourth party of Cloudflare and PagerDuty','No data named'],
+  reason:'Greenhouse is a subprocessor of Cloudflare and of PagerDuty for recruiting. Neither sends any of your data to Greenhouse.',
+  src:'Source: Greenhouse status page, public. Incident opened Jun 30 13:02 UTC, resolved 18:15 UTC.',said:'Candidate facing application pages returned errors. Recruiter facing tools were unaffected.',fic:true,
+  sec:[['Why this does not reach you',['Greenhouse is on Cloudflare’s and PagerDuty’s subprocessor lists for their own recruiting.','None of your data goes down either path.']],['Where this stands as of Jun 30',['In your chain, on paths that carry none of your data.']]]},
+
+ {id:'colt',involved:false,depth:'outside',type:'Outage',found:'conventional',about:'Colt Technology Services',
+  date:'Aug 12',sort:'2025-08-12',subject:'Colt Technology Services takes customer portal offline after a cyber incident',
+  meta:['Colt customer notice','Not in your supply chain','No customer data named'],
+  reason:'Colt is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Colt customer notice, public, Aug 12.',said:'Colt reported a cyber incident affecting internal systems and took its customer portal and some support services offline as a precaution. It stated the incident was separate from its customer infrastructure.',
+  sec:[['Why this does not reach you',['Colt is not in your chain.']],['Where this stands as of Aug 12',['Outside your chain.']]]},
+
+ {id:'manpower',involved:false,depth:'outside',type:'Confirmed breach',found:'conventional',about:'ManpowerGroup',
+  date:'Aug 11',sort:'2025-08-11',subject:'Manpower reports data theft at a US franchise office',
+  meta:['State regulator filing','Not in your supply chain','Personal data named'],
+  reason:'ManpowerGroup is not one of your vendors and is not a subprocessor of any of them.',
+  src:'Source: Breach notification filed with the Maine Attorney General, public, Aug 11.',said:'Manpower reported that a franchise office in Michigan experienced unauthorized access between Dec 29 and Jan 12, affecting personal information of about 145,000 people.',
+  sec:[['Why this does not reach you',['ManpowerGroup is not in your chain.']],['Where this stands as of Aug 11',['Outside your chain.']]]}
+];
+</script>
+<script>
+/* ---------- state + router ---------- */
+const state={screen:'vendors',vendor:null,tab:'fourth',q:'',flow:'all',mview:'involved',mfilter:'all',thread:null,day:0,mapOpen:null,pq:'',layout:'L6',panel:null,checkedOpen:false,mtab:'risk',mq:'',cq:'',openMsgs:{0:true},unread:{salesloft:true},ptab:'vendors',sflow:'all',zoom:{k:1,x:0,y:0},ssort:'data',sdir:'asc',openSub:null,fsort:'data',fdir:'asc',open4:null};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmt=d=>{const [y,m,dd]=d.split('-');return `${m}.${dd}.${y.slice(2)}`};
+function go(screen,opts){Object.assign(state,{screen},opts||{});if(screen==='map')state.zoom={k:1,x:0,y:0};state.panel=null;closeSheet();render();$('main').scrollTop=0}
+function openVendor(id){go('vendor',{vendor:id,tab:'fourth',q:'',flow:'all',open4:null})}
+function openThread(id){const t=THREADS.find(x=>x.id===id);go('incident',{thread:id,mview:t.involved?'involved':'not'})}
+function render(){
+ document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('on',b.dataset.nav===(state.screen==='monitoring'||state.screen==='incident'?'monitoring':'vendors')));
+ const nUnread=Object.values(state.unread).filter(Boolean).length;
+ $('banner').classList.toggle('on',nUnread>0);
+ const nb=document.querySelector('[data-nav="monitoring"] .nbadge'); if(nb){nb.textContent=nUnread; nb.classList.toggle('hide',nUnread===0)}
+ const m=$('main');
+ m.innerHTML = state.screen==='vendors'?rPortfolio():state.screen==='vendor'?rVendor():state.screen==='monitoring'?rMonitoring():state.screen==='incident'?rIncident():rMap();
+ if(state.screen==='map')drawMap();
+ renderPanel(); renderMod();
+}
+const risk=v=>`<span class="badge ${v==='Critical'||v==='High'?'hi':v==='Low'?'lo':''}">${v}</span>`;
+const stat=s=>`<span class="dot"><i class="${s==='active'?'':'off'}"></i>${s==='active'?'Active':'Inactive'}</span>`;
+const sIco='<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+
+/* ---------- screen 1: vendor portfolio ---------- */
+
+/* sensitivity of each data classification Hannah sends: high / medium / low */
+const SENS={'API tokens (occasional)':'high','Credentials':'high','Customer PII':'high','Meeting audio and transcripts':'high','Call recordings':'high','Vendor payment details':'high','Employee payroll details':'high','Employee HR records':'high','Source code':'high',
+ 'Support ticket content':'medium','Configuration and logs':'medium','Customer contact details':'medium','Employee names and emails':'medium','Documents and messages':'medium','Prospect and customer contact details':'medium','Employee identities':'medium','Authentication logs':'medium',
+ 'Traffic metadata':'low','Product usage events':'low','Account identifiers':'low','Customer account identifiers':'low'};
+const sensOf=t=>SENS[t]||'low';
+function pathTypes(vname,sub){const v=VENDORS.find(x=>x.name===vname); if(!v)return []; if(sub==='Salesloft')return ['Support ticket content']; return dataTypesTo(v).slice(0,sub==='Amazon Web Services'?4:2)}
+function subDetail(x,onlyVendor){
+ if(onlyVendor){x={...x,paths:x.paths.filter(q=>q.vname===onlyVendor)}}
+ const p=FP[x.n]||{}; const first=x.paths[0];
+ const does=p.does||`Listed as a subprocessor by ${first.vname} for ${(TAIL_USE[x.n]||'a service').toLowerCase()}. Company details are not on file yet.`;
+ const cat=p.use||TAIL_USE[x.n]||'';
+ const withData=x.paths.filter(q=>q.data), without=x.paths.filter(q=>!q.data);
+ const chips=(types)=>types.map(t=>`<span class="dc"><i class="${sensOf(t)}"></i>${esc(t)}</span>`).join('');
+ return `<div class="sx">
+  <div class="sxa">
+   ${cat?`<div class="sxn">${esc(cat)}</div>`:''}
+   <p class="sxd" style="margin-top:${cat?'4':'0'}px">${esc(does)}</p>
+   <dl class="sxf"><div><dt>HQ</dt><dd>${esc(p.hq||'Not on file')}</dd></div><div><dt>Founded</dt><dd>${p.yr||'Not on file'}</dd></div><div><dt>Attestations</dt><dd>${(p.docs&&p.docs.length)?p.docs.join(' &middot; '):'None known'}</dd></div><div><dt>Contract</dt><dd>No direct contract. Reached only through ${onlyVendor?esc(onlyVendor):'your vendor'+(x.paths.length>1?'s':'')}.</dd></div></dl>
+  </div>
+  <div class="sxb">
+   <div class="sxh"><span>Data classifications passed in</span></div>
+   ${!withData.length?`<p class="sxd">${onlyVendor?esc(onlyVendor)+' does not send any of your customer data to '+esc(x.n)+'.':'None of your customer data reaches this subprocessor.'}</p>`
+     :withData.length<=3?withData.map(q=>`<div class="sxp">${onlyVendor?'':`<div class="sxv">Through ${esc(q.vname)}</div>`}<div class="dcs">${chips(pathTypes(q.vname,x.n))}</div></div>`).join('')
+     :(()=>{const order={high:0,medium:1,low:2};const all=[...new Set(withData.flatMap(q=>pathTypes(q.vname,x.n)))].sort((a,b)=>order[sensOf(a)]-order[sensOf(b)]||a.localeCompare(b));
+        const names=withData.map(q=>q.vname);const shown=names.slice(0,8);
+        return `<div class="sxp"><div class="sxv">Through ${withData.length} of your vendors</div><div class="dcs">${chips(all)}</div></div><div class="sxp"><div class="sxv">${shown.map(esc).join(', ')}${names.length>shown.length?` and ${names.length-shown.length} more`:''}</div></div>`})()}
+   ${without.length&&withData.length?`<div class="sxp off"><div class="sxv">No customer data through ${without.map(q=>esc(q.vname)).join(', ')}</div></div>`:''}
+  </div>
+ </div>`;
+}
+function allSubs(){
+ const m={};
+ VENDORS.forEach(v=>v.fps.forEach(f=>{(m[f.n]=m[f.n]||{n:f.n,paths:[]}).paths.push({vid:v.id,vname:v.name,data:f.data,added:f.added})}));
+ return Object.values(m).map(x=>{x.paths.sort((a,b)=>(a.data===b.data?0:a.data?-1:1)||a.vname.localeCompare(b.vname));x.data=x.paths.some(p=>p.data);x.since=x.paths.reduce((m,p)=>p.added<m?p.added:m,'9');return x}).sort((a,b)=>a.n.localeCompare(b.n));
+}
+function rPortfolio(){
+ const q=state.pq.toLowerCase(); const subs=state.ptab==='subs';
+ const tabs=`<div class="views" style="margin:0 0 14px"><button class="${!subs?'on':''}" onclick="state.ptab='vendors';state.pq='';render()">Vendors</button><button class="${subs?'on':''}" onclick="state.ptab='subs';state.pq='';render()">Subprocessors</button></div>`;
+ const srch=(ph)=>`<div class="srch">${sIco}<input placeholder="${ph}" value="${esc(state.pq)}" oninput="state.pq=this.value;render();const i=document.querySelector('.srch input');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></div>`;
+ if(subs){
+  const all=allSubs(); let rows=all.filter(x=>!q||x.n.toLowerCase().includes(q)||x.paths.some(p=>p.vname.toLowerCase().includes(q)));
+  const yes=all.filter(x=>x.data).length;
+  const dir=state.sdir==='asc'?1:-1;
+  rows.sort((a,b)=>{
+   if(state.ssort==='vendors'){const d=(b.paths.length-a.paths.length)*dir; return d||a.n.localeCompare(b.n)}
+   if(state.ssort==='data'){const d=((b.data?1:0)-(a.data?1:0))*dir; return d||a.n.localeCompare(b.n)}
+   if(state.ssort==='since'){const d=a.since.localeCompare(b.since)*dir; return d||a.n.localeCompare(b.n)}
+   return a.n.localeCompare(b.n)*dir});
+  const SH=(label,key)=>{const on=state.ssort===key; const ico=on?(state.sdir==='asc'?'<path d="m6 15 6-6 6 6"/>':'<path d="m6 9 6 6 6-6"/>'):'<path d="m7 15 5 5 5-5M7 9l5-5 5 5"/>';
+   return `<th><button class="sh ${on?'on':''}" onclick="if(state.ssort==='${key}'){state.sdir=state.sdir==='asc'?'desc':'asc'}else{state.ssort='${key}';state.sdir='asc'};render()">${label}<svg viewBox="0 0 24 24">${ico}</svg></button></th>`};
+  return `<div class="page">
+   <div class="hd"><div><h1>Vendor portfolio</h1><p class="sub">${rows.length} of ${all.length} subprocessors across your ${VENDORS.length} vendors</p></div>
+    <button class="btn lg" onclick="go('map')">${MAPICO}Supply chain map</button></div>
+   ${tabs}
+   <div class="tools">${srch('Search subprocessors...')}</div>
+   <div class="card"><div style="overflow-x:auto"><table><thead><tr><th class="xc"></th>${SH('Subprocessor','name')}${SH('Vendor(s)','vendors')}${SH('Receives your customer data','data')}</tr></thead><tbody>
+   ${rows.map(x=>{const shown=x.paths.slice(0,3), more=x.paths.length-shown.length; const open=state.openSub===x.n;
+     return `<tr class="act ${open?'open':''}" onclick="state.openSub=${open?'null':`'${esc(x.n).replace(/'/g,"\\'")}'`};render()"><td class="xc"><span class="xbtn ${open?'open':''}" title="${open?'Collapse':'Expand'}"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span></td><td><div class="vn"><div class="ximg"></div>${esc(x.n)}</div></td>
+      <td><div class="vchips">${shown.map(p=>`<span class="vchip ${p.data?'':'off'}" title="${p.data?'Receives your customer data through '+esc(p.vname):'No customer data through '+esc(p.vname)}">${esc(p.vname)}</span>`).join('')}${more>0?`<span class="vmore">+${more}</span>`:''}</div></td>
+      <td class="nw">${x.data?`<span class="flow"><i></i>Yes${x.paths.length>1?`<span class="xs mut" style="margin-left:6px">through ${x.paths.filter(p=>p.data).length} of ${x.paths.length}</span>`:''}</span>`:'<span class="flow no"><i></i>No</span>'}</td>
+      </tr>${open?`<tr class="xrow"><td colspan="4">${subDetail(x)}</td></tr>`:''}`}).join('')}
+   </tbody></table></div></div></div>`;
+ }
+ const rows=VENDORS.filter(v=>!q||v.name.toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+ return `<div class="page">
+  <div class="hd"><div><h1>Vendor portfolio</h1><p class="sub">${rows.length} of ${VENDORS.length} vendors</p></div>
+   <button class="btn lg" onclick="go('map')">${MAPICO}Supply chain map</button></div>
+  ${tabs}
+  <div class="tools">${srch('Search vendors...')}<span class="fb">Status &#9662;</span><span class="fb">Inherent risk &#9662;</span><span class="fb">Residual risk &#9662;</span></div>
+  <div class="card"><div style="overflow-x:auto"><table><thead><tr><th>Vendor</th><th>Status</th><th>Inherent risk</th><th>Residual risk</th><th>Fourth parties</th><th>Last assessed</th></tr></thead><tbody>
+  ${rows.map(v=>`<tr class="act" onclick="openVendor('${v.id}')"><td><div class="vn"><div class="ximg"></div>${esc(v.name)}</div></td><td class="nw">${stat(v.status)}</td><td class="nw">${risk(v.inh)}</td><td class="nw">${risk(v.res)}</td><td class="nw">${v.fps.length}</td><td class="nw xs mut">${fmt(v.last)}</td></tr>`).join('')}
+  </tbody></table></div></div></div>`;
+}
+const MAPICO='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2.5"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><path d="m10.3 10.6-4.6-3.2M13.7 10.6l4.6-3.2M10.3 13.4l-4.6 3.2M13.7 13.4l4.6 3.2"/></svg>';
+
+/* ---------- screen 2: vendor detail ---------- */
+const OWNERS=['Priya Natarajan','Marcus Lee','Dana Whitfield','Tom Okafor','Elena Ruiz','Sam Patel'];
+function rVendor(){
+ const v=byId[state.vendor]; const tabs=[['assess','Assessment history'],['docs','Vendor documents'],['fourth','4th parties']];
+ const owner=OWNERS[hash(v.name)%OWNERS.length]; const site='www.'+v.id.replace(/-/g,'')+'.com';
+ return `<div class="page narrow">
+  <div class="toprow"><button class="back" onclick="go('vendors')">&#8592; Vendor portfolio</button>     <div class="src" style="margin-top:0"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>Monitored across 6 sources, checked today 6:40 AM &middot; <span class="tt" onclick="this.classList.toggle('open');event.stopPropagation()"><a>Sources</a>
+      <div class="tip">
+       ${(v.name==='Cloudflare'
+         ?[['Trust center','https://www.cloudflare.com/trust-hub/'],['Subprocessor list','https://www.cloudflare.com/gdpr/subprocessors/'],['Status page','https://www.cloudflarestatus.com/'],['Security blog','https://blog.cloudflare.com/tag/security/'],['Incident history','https://www.cloudflarestatus.com/history'],['Disclosures shared with you','#']]
+         :[['Trust center',`https://trust.${site.replace('www.','')}/`],['Subprocessor list',`https://${site}/legal/subprocessors`],['Status page',`https://status.${site.replace('www.','')}/`],['Security blog',`https://${site}/blog/security`],['Incident history',`https://status.${site.replace('www.','')}/history`],['Disclosures shared with you','#']]
+        ).map(r=>`<a class="tipr" href="${r[1]}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span>${r[0]}</span><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg></a>`).join('')}
+      </div></span></div>
+  </div>
+  <div class="card" style="margin-top:12px;overflow:visible">
+   <div class="prof">
+    <div class="ximg lg"></div>
+    <div style="min-width:0;flex:1">
+     <div class="line"><h1>${esc(v.name)}</h1><span class="badge sec">Vendor profile</span></div>
+     <p class="meta">${esc(v.line)}</p>
+     <p class="usedfor"><b>Used for</b> ${useCase(v)}</p>
+     <div class="links"><a>${GLOBE}${site}</a><a>${GLOBE}Trust Center</a></div>
+    </div>
+    <div class="acts"><button class="btn o lg">Export</button><button class="btn lg" onclick="alert('Prototype: assessment flow is out of scope')">Start assessment</button></div>
+   </div>
+   <div class="glance"><div class="gl"><span>Status</span><b class="dotb"><i class="${v.status==='active'?'':'off'}"></i>${v.status==='active'?'Active':'Inactive'} <small>&#8964;</small></b></div><div class="gl"><span>Criticality</span><b>${esc(v.inh)}</b></div><div class="gl"><span>Business owner</span><b>${owner}</b></div><div class="gl"><span>Current documents</span><b>${v.docs}</b></div></div>
+  </div>
+  <div class="views vtabs">${tabs.map(t=>t[0]==='fourth'?`<button class="${state.tab===t[0]?'on':''}" onclick="state.tab='${t[0]}';render()">${t[1]}</button>`:`<button class="inert" tabindex="-1">${t[1]}</button>`).join('')}</div>
+  ${state.tab==='fourth'?rFourth(v):state.tab==='assess'?rAssess(v):rDocs(v)}
+ </div>`;
+}
+const GLOBE='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
+function catName(c){return {infra:'Infrastructure',support:'Customer support',collab:'Collaboration',data:'Data and analytics',ai:'AI',sales:'Sales and marketing',fin:'Finance',hr:'People',dev:'Engineering',sec:'Security'}[c]}
+function useCase(v){
+ if(v.name==='Cloudflare')return 'Fronts our production traffic and DNS. Engineering opens support tickets with Cloudflare that include configuration, logs and occasionally API tokens pasted for troubleshooting.';
+ const d=dataTypesTo(v); return `We use ${v.name} for ${v.line.toLowerCase()}. It receives ${d.slice(0,2).join(' and ').toLowerCase()}.`;
+}
+function rAssess(v){
+ const rows=[];for(let i=0;i<v.assessments;i++){rows.push(`<tr><td>${esc(v.line)}</td><td class="nw"><span class="dot"><i></i>Complete</span></td><td class="nw">${risk(v.inh)}</td><td class="nw">${risk(v.res)}</td><td class="nw xs mut">${fmt(v.last)}</td></tr>`)}
+ return `<div class="secttl"><h2>Assessment history</h2><button class="btn sm">Start assessment</button></div><div class="card"><table><thead><tr><th>Product</th><th>Status</th><th>Inherent risk</th><th>Residual risk</th><th>Completed</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+function rDocs(v){
+ const names=['SOC 2 Type II report','ISO 27001 certificate','Data processing agreement','Subprocessor list','Penetration test summary','Security whitepaper','Business continuity summary','Privacy policy','Insurance certificate','Completed security questionnaire'];
+ return `<div class="secttl"><h2>Vendor documents</h2></div><div class="card">${names.slice(0,v.docs).map(n=>`<div class="thr" style="cursor:default"><div class="ximg sm" style="border-radius:4px"></div><div class="b"><div style="font-size:13.5px;font-weight:500">${n}</div><div class="xs mut">Collected during assessment &middot; ${fmt(v.last)}</div></div></div>`).join('')}</div>`;
+}
+function rFourth(v){
+ const q=state.q.toLowerCase();
+ let rows=v.fps.filter(f=>!q||f.n.toLowerCase().includes(q)||(FP[f.n]?.use||TAIL_USE[f.n]||'').toLowerCase().includes(q));
+ const use=f=>FP[f.n]?.use||TAIL_USE[f.n]||'';
+ const dir=state.fdir==='asc'?1:-1;
+ rows.sort((a,b)=>{
+  if(state.fsort==='use'){const d=use(a).localeCompare(use(b))*dir; return d||a.n.localeCompare(b.n)}
+  if(state.fsort==='data'){const d=((b.data?1:0)-(a.data?1:0))*dir; return d||a.n.localeCompare(b.n)}
+  return a.n.localeCompare(b.n)*dir});
+ const SH=(label,key)=>{const on=state.fsort===key; const ico=on?(state.fdir==='asc'?'<path d="m6 15 6-6 6 6"/>':'<path d="m6 9 6 6 6-6"/>'):'<path d="m7 15 5 5 5-5M7 9l5-5 5 5"/>';
+  return `<th><button class="sh ${on?'on':''}" onclick="if(state.fsort==='${key}'){state.fdir=state.fdir==='asc'?'desc':'asc'}else{state.fsort='${key}';state.fdir='asc'};render()">${label}<svg viewBox="0 0 24 24">${ico}</svg></button></th>`};
+ return `<div class="secttl"><h2>4th parties <span class="mut" style="font-weight:400">(${v.fps.length})</span></h2></div>
+  <div class="tools" style="margin-bottom:10px"><div class="srch">${sIco}<input placeholder="Search 4th parties..." value="${esc(state.q)}" oninput="state.q=this.value;render();const i=document.querySelector('.srch input');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></div></div>
+  <div class="card"><table><thead><tr><th class="xc"></th>${SH('4th party','name')}${SH('Use case','use')}${SH('Receives your customer data','data')}</tr></thead><tbody>
+  ${rows.length?rows.map(f=>{const open=state.open4===f.n; const agg=allSubs().find(x=>x.n===f.n);
+    return `<tr class="act ${open?'open':''}" onclick="state.open4=${open?'null':`'${esc(f.n).replace(/'/g,"\\'")}'`};render()"><td class="xc"><span class="xbtn ${open?'open':''}"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></span></td><td><div class="vn"><div class="ximg sm"></div>${esc(f.n)}</div></td><td class="mut">${esc(use(f))}</td><td class="nw">${f.data?'<span class="flow"><i></i>Yes</span>':'<span class="flow no"><i></i>No</span>'}</td></tr>${open&&agg?`<tr class="xrow"><td colspan="4">${subDetail(agg,v.name)}</td></tr>`:''}`}).join(''):'<tr><td colspan="4" class="emptyq">No 4th parties match</td></tr>'}
+  </tbody></table></div>`;
+}
+/* fourth party drawer */
+function openFp(vid,name){
+ const v=byId[vid], f=v.fps.find(x=>x.n===name), p=FP[name]||{hq:'Not on file',yr:'Not on file',does:`Listed as a subprocessor by ${v.name} for ${(TAIL_USE[name]||'a service').toLowerCase()}. Company details are not on file yet.`,docs:[],use:TAIL_USE[name]||''};
+ const types=f.data?(name==='Salesloft'?['Support ticket content']:dataTypesTo(v).slice(0,name==='Amazon Web Services'?4:2)):[];
+ $('sheet').innerHTML=`<button class="x" onclick="closeSheet()">&times;</button>
+  <div style="display:flex;gap:12px;align-items:center"><div class="ximg"></div><div><h2>${esc(name)}</h2><div class="xs mut">Fourth party through ${esc(v.name)}</div></div></div>
+  <p style="margin:14px 0 0;font-size:13.5px;line-height:1.6">${esc(p.does)}</p>
+  <dl class="kv">
+   <dt>Data types passed to ${esc(name)} through ${esc(v.name)}</dt>
+   <dd>${f.data?`<ul>${types.map(t=>`<li>${t}<span>from you, to ${esc(v.name)}</span></li>`).join('')}</ul>`:`<div class="note">${esc(v.name)} does not send your customer data to ${esc(name)}, based on the data flows ${esc(v.name)} disclosed ${fmt(v.name==='Cloudflare'?'2025-08-19':v.last)}. ${esc(v.name)} uses it for ${esc((p.use||'').toLowerCase())}.</div>`}</dd>
+   <dt>Headquarters</dt><dd>${esc(p.hq)}</dd>
+   <dt>Founded</dt><dd>${p.yr}</dd>
+   <dt>Known security documents</dt><dd>${p.docs.length?p.docs.join(', '):'None known'}</dd>
+  </dl>`;
+ $('sheet').classList.add('on');$('scrim').classList.add('on');
+}
+function closeSheet(){$('sheet').classList.remove('on');$('scrim').classList.remove('on')}
+
+/* ---------- screen 3: monitoring ---------- */
+function isVendorThread(t){return t.depth==='vendor'}
+function isFourthThread(t){return t.depth==='fourth'}
+function miniChain(t){
+ const c=(n,cls)=>`<span class="c ${cls||''}">${esc(n)}</span>`, a=(off)=>`<span class="a ${off?'off':''}">&#8250;</span>`;
+ const via=t.via&&t.via[0];
+ if(t.depth==='outside') return `<span class="mc">${c('Your data','you')}${a()}${c('Your vendors')}<span class="note">${esc(t.about)} not connected</span></span>`;
+ if(t.depth==='vendor') return `<span class="mc">${c('Your data','you')}${a()}${c(t.about,'end')}</span>`;
+ if(!t.involved) return `<span class="mc">${c('Your data','you')}${a()}${c(via)}${a(true)}${c(t.about,'off')}<span class="note">no customer data</span></span>`;
+ return `<span class="mc">${c('Your data','you')}${a()}${c(via)}${a()}${c(t.about,'end')}</span>`;
+}
+function rMonitoring(){
+ const q=(state.mq||'').toLowerCase();
+ const f=t=>!q||t.subject.toLowerCase().includes(q)||t.about.toLowerCase().includes(q)||(t.via||[]).join(' ').toLowerCase().includes(q);
+ const inv=THREADS.filter(t=>t.involved&&!t.other&&f(t)).sort((a,b)=>b.sort.localeCompare(a.sort));
+ const oth=THREADS.filter(t=>t.involved&&t.other&&f(t)).sort((a,b)=>b.sort.localeCompare(a.sort));
+ const not=THREADS.filter(t=>!t.involved&&f(t)).sort((a,b)=>b.sort.localeCompare(a.sort));
+ const cards = inv.length?`<div class="alist">${inv.map(alertCard).join('')}</div>`:'<div class="card"><div class="emptyq">No incidents match</div></div>';
+ const checked='';
+ return `<div class="page" style="max-width:1100px">
+  <div class="hd" style="margin-bottom:18px"><h1>4th party monitoring</h1><div class="status src"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg><span>Monitored across ${VENDORS.length*4+20} sources, checked today 6:40 AM</span></div></div>
+  <div class="views" style="margin:0 0 14px"><button class="${state.mtab!=='other'?'on':''}" onclick="state.mtab='risk';render()">Risk advisories</button><button class="${state.mtab==='other'?'on':''}" onclick="state.mtab='other';render()">Notices</button></div>
+  <p class="sub" style="margin:0 0 14px">${state.mtab==='other'
+   ?'Notices about the subprocessors your vendors use, such as a new subprocessor, a lapsed audit report, or new AI processing. A notice is only shown when your customer data reaches that subprocessor.'
+   :'Security disclosures from your 4th party subprocessors, filtered to the ones your customer data actually reaches. Where the disclosure names data, it is matched against what your vendor sends them.'}</p>
+  <div class="tools" style="margin-bottom:14px"><div class="srch">${sIco}<input placeholder="${state.mtab==='other'?'Search notices...':'Search risk advisories...'}" value="${esc(state.mq||'')}" oninput="state.mq=this.value;render();const i=document.querySelector('.srch input');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></div><span class="fb">Last 30 days &#9662;</span>${state.mtab==='other'?'':`<button class="arrlink" style="margin-left:auto" onclick="state.panel='checked';render()">Checked disclosures <span class="arr">&#8594;</span></button>`}</div>
+  ${state.mtab==='other'?otherTable(oth):cards+checked}
+ </div>`;
+}
+function otherTable(list){return list.length?`<div class="alist">${list.map(alertCard).join('')}</div>`:'<div class="card"><div class="emptyq">Nothing here</div></div>'}
+function openOther(id){state.panel=id;render()}
+function whyNot(t){
+ if(t.depth==='outside') return t.about+' is not one of your vendors and is not a subprocessor of any of them.';
+ if(t.depth==='vendor') return t.about+' is your vendor. The system named is not the one your data is in.';
+ return t.about+' is a subprocessor of '+t.via.join(' and ')+'. No customer data of yours goes down that path.';
+}
+function renderPanel(){
+ const el=$('panel'); if(!state.panel){el.classList.remove('on');el.innerHTML='';return}
+ if(state.unread[state.panel]){state.unread[state.panel]=false;render();return}
+ if(state.panel==='checked'){
+  const q=(state.cq||'').toLowerCase();
+  const list=THREADS.filter(t=>!t.involved&&(!q||t.subject.toLowerCase().includes(q)||t.about.toLowerCase().includes(q)||whyNot(t).toLowerCase().includes(q))).sort((a,b)=>b.sort.localeCompare(a.sort));
+  el.innerHTML=`<div class="ph"><div><h3>Checked disclosures</h3><p class="sub" style="margin:2px 0 0">Security disclosures the agent reviewed and set aside. None reach you through a 4th party subprocessor.</p></div><button class="x" onclick="state.panel=null;render()">&times;</button></div>
+   <div class="srch" style="width:100%;margin:12px 0 4px">${sIco}<input id="cq" placeholder="Search checked disclosures..." value="${esc(state.cq)}" oninput="state.cq=this.value;renderPanel();const i=document.getElementById('cq');i.focus();i.setSelectionRange(i.value.length,i.value.length)"></div>
+   <div class="plain" style="margin-top:8px">${list.length?list.map(t=>`<div class="li" onclick="state.panel='${t.id}';render()"><div><div class="s">${esc(t.subject)}</div><div class="w">${esc(whyNot(t))}</div></div><div class="d">${fmt(t.sort)}</div></div>`).join(''):'<div class="emptyq">No checked disclosures match</div>'}</div>`;
+  el.classList.add('on'); return;
+ }
+ const t=THREADS.find(x=>x.id===state.panel); if(!t){el.classList.remove('on');return}
+ const r=rowOf(t); const source=t.involved?r.source:shortSrc(t);
+ const pills=t.involved&&r.yours?`<div class="dcs" style="margin-top:10px">${r.yours.replace(/\s*\(.*?\)/,'').split(/,\s*/).map(x=>`<span class="dc"><i class="${sensOf(x)}"></i>${esc(x)}</span>`).join('')}</div>`:'';
+ let html=`${t.involved?'':`<button class="btn ghost" style="margin:-6px 0 8px -8px;font-size:12px" onclick="state.panel='checked';render()">&#8592; Checked disclosures</button>`}
+  <div class="ph"><h3>${esc(t.subject)}</h3><button class="x" onclick="state.panel=null;render()">&times;</button></div>
+  <p class="lab">${t.involved?'What happened':'What happened, and why it does not reach you'}</p><p class="p">${esc(sumOf(t))}</p>${pills}
+  <p class="srcline">Source: <a href="${t.special?(state.day===0?'https://trust.salesloft.com/?uid=Drift+Security+Update':state.day===13?'https://blog.cloudflare.com/response-to-salesloft-drift-incident/':'#'):'#'}" target="_blank" rel="noopener">${esc(source)}</a></p>`;
+ if(t.special){
+  const label={0:'First advisory',3:'Update',6:'Update',13:'Update'}, from={0:'Salesloft trust center',3:'Cloudflare, through Conveyor',6:'Cloudflare, through Conveyor',13:'Cloudflare security blog'};
+  const msgs=SL.msgs.filter(m=>m.day<=state.day).reverse();
+  html+=`<p class="lab" style="margin-top:22px">Thread</p><div class="thread">`+msgs.map(m=>{
+   const open=!!state.openMsgs[m.day];
+   const keep=sec=>!/^Where this stands|^What is not known/.test(sec[0]);
+   return `<div class="tm ${open?'open':''}"><button class="tmh" onclick="state.openMsgs[${m.day}]=!state.openMsgs[${m.day}];render()">
+     <span class="tmd">${fmt(ROW.salesloft[m.day].date)}</span><span class="tml"><b>${label[m.day]}</b> <span class="mut">from ${from[m.day]}</span></span><i class="cv">&#8250;</i></button>
+     ${open?`<div class="tmb"><blockquote style="margin-top:10px">${esc(m.quote)}</blockquote>
+      ${m.sections.filter(keep).map(s=>`<h4>${esc(s[0])}</h4>${s[1].map(p=>`<p>${esc(p)}</p>`).join('')}${s[2]?`<p class="path">${esc(s[2])}</p>`:''}`).join('')}</div>`:''}
+    </div>`}).join('')+`</div>`;
+ } else {
+  html+=`<p class="lab" style="margin-top:22px">Details</p><div class="msg" style="padding-top:0"><blockquote style="margin-top:4px">${esc(t.said)}</blockquote>
+   ${(t.sec||[]).filter(sec=>!/^Where this stands|^What is not known/.test(sec[0])).map(s=>`<h4>${esc(s[0])}</h4>${s[1].map(p=>`<p>${esc(p)}</p>`).join('')}${s[2]?`<p class="path">${esc(s[2])}</p>`:''}`).join('')}</div>`;
+ }
+ el.innerHTML=html; el.classList.add('on');
+}
+function alertCard(t){
+ const r=rowOf(t); const date=fmt(t.special?r.date:t.sort); const source=t.involved?r.source:shortSrc(t);
+ const via=t.via&&t.via[0];
+ const href = t.special ? (state.day===0 ? 'https://trust.salesloft.com/?uid=Drift+Security+Update' : state.day===13 ? 'https://blog.cloudflare.com/response-to-salesloft-drift-incident/' : '#') : '#';
+ const crumb = t.depth==='outside' ? `<span>Your data</span><i>&rsaquo;</i><span>Your vendors</span><i>&rsaquo;</i><span class="off">${esc(t.about)} <small>(not connected)</small></span>`
+  : t.depth==='vendor' ? `<span>Your data</span><i>&rsaquo;</i><span class="end">${esc(t.about)} <small>(3rd party)</small></span>`
+  : `<span>Your data</span><i>&rsaquo;</i><span>${esc(via)} <small>(3rd party)</small></span><i>&rsaquo;</i><span class="${t.involved?'end':'off'}">${esc(t.about)} <small>(4th party${t.involved?'':', no customer data'})</small></span>`;
+ return `<div class="al ${state.panel===t.id?'sel':''} ${state.unread[t.id]?'unread':''}" id="inc-${t.id}" onclick="state.panel='${t.id}';render()">
+  <div class="band"><h2>${t.involved&&!t.other?'<svg class="warn" viewBox="0 0 24 24" aria-label="Risk advisory"><path d="M10.3 3.9 2.4 17.5A1.9 1.9 0 0 0 4 20.4h16a1.9 1.9 0 0 0 1.6-2.9L13.7 3.9a1.9 1.9 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>':''}${esc(t.subject)}</h2><div class="when">${t.special
+    ?(()=>{const n=SL.msgs.filter(m=>m.day<=state.day).length;return `<span>${fmt(ROW.salesloft[state.day].date)}</span><span class="sep">&middot;</span><span class="thr-n"><svg viewBox="0 0 24 24"><path d="M9 17H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3"/><path d="M15 14l3 3-3 3"/><path d="M11 17h7"/></svg>${n>1?`${n} in thread${state.unread[t.id]?', <b>1 new</b>':''}`:(state.unread[t.id]?'<b>New advisory</b>':'First advisory')}</span>`})()
+    :`<span>Disclosed ${date}</span>`}<a class="srcico" href="${href}" target="_blank" rel="noopener" title="Source: ${esc(source)}" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg></a></div></div>
+  <div class="body"><div class="crumb">${crumb}</div><p class="line">${esc(lineOf(t))}</p></div>
+ </div>`;
+}
+function whyNot(t){
+ if(t.depth==='outside') return t.about+' is not one of your vendors and is not a subprocessor of any of them.';
+ if(t.depth==='vendor') return t.about+' is your vendor. The system named is not the one your data is in.';
+ return t.about+' is a subprocessor of '+t.via.join(' and ')+'. No customer data of yours goes down that path.';
+}
+
+/* ---------- screen 5: supply chain map ---------- */
+function hl(i,on){document.querySelectorAll('.sh-'+i).forEach(l=>l.classList.toggle('lit',!!on))}
+function rMap(){
+ const open=state.mapOpen?byId[state.mapOpen]:null;
+ return `<div class="page">
+  <button class="back" onclick="go('vendors')">&#8592; Vendor portfolio</button>
+  <div class="hd" style="margin-top:12px"><div><h1>Supply chain map</h1><p class="sub">${open?`${esc(open.name)}: ${open.fps.length} subprocessors, ${open.fps.filter(f=>f.data).length} receive your customer data. Filled dots receive your data, hollow ones do not. Dotted lines show which of your other vendors share a subprocessor.`:`${VENDORS.length} vendors. Click a vendor to see its subprocessors.`}</p></div>
+   <div style="display:flex;gap:8px;flex:0 0 auto">${open?`<button class="btn o" onclick="openVendor('${open.id}')">Open ${esc(open.name)}</button><button class="btn o" onclick="state.mapOpen=null;render()">Collapse</button>`:''}</div></div>
+  <div class="card mapcard"><svg class="map" id="mapsvg" viewBox="0 0 1600 1200"></svg>
+   <div class="zoomctl"><button title="Zoom in" onclick="zoomBy(1.25)">+</button><button title="Zoom out" onclick="zoomBy(0.8)">&minus;</button><button title="Reset view" onclick="zoomReset()">&#8634;</button></div>
+   <div class="zoomhint">Scroll to zoom, drag to move</div></div>
+ </div>`;
+}
+function drawMap(){
+ const svg=$('mapsvg'); const W=1600,H=1200,cx=W/2,cy=H/2,R=330,R2=470;
+ const vs=[...VENDORS].sort((a,b)=>a.name.localeCompare(b.name));
+ const pos={}; vs.forEach((v,i)=>{const a=-Math.PI/2+i*2*Math.PI/vs.length;pos[v.id]={x:cx+R*Math.cos(a),y:cy+R*Math.sin(a),a}});
+ const open=state.mapOpen?byId[state.mapOpen]:null;
+ let out='';
+ // spokes hub → vendor
+ vs.forEach(v=>{const p=pos[v.id];out+=`<line class="spoke ${open&&open.id===v.id?'open':''}" x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}"/>`});
+ let fpNodes='';
+ if(open){
+  const p=pos[open.id]; const n=open.fps.length; const spread=Math.min(Math.PI*1.1, 0.075*n+0.4);
+  const start=p.a-spread/2;
+  open.fps.forEach((f,i)=>{
+   const a=start+(n===1?spread/2:i*spread/(n-1)); const r=R2+((i%2)?70:0)+ (n>30?((i%3)*22):0);
+   const x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+   const sharers=VENDORS.filter(o=>o.id!==open.id&&o.fps.some(g=>g.n===f.n));
+   sharers.forEach(o=>{const q=pos[o.id];out+=`<line class="share sh-${i} ${sharers.length>5?'hov':''}" x1="${x}" y1="${y}" x2="${q.x}" y2="${q.y}"/>`});
+   out+=`<line class="fl ${f.data?'':'no'}" x1="${p.x}" y1="${p.y}" x2="${x}" y2="${y}"/>`;
+   const right=Math.cos(a)>=0;
+   fpNodes+=`<g class="fp ${f.data?'data':''}" style="cursor:pointer" onclick="openFp('${open.id}','${esc(f.n)}')" onmouseenter="hl(${i},1)" onmouseleave="hl(${i},0)"><circle cx="${x}" cy="${y}" r="5"/><text x="${x+(right?9:-9)}" y="${y+3.5}" text-anchor="${right?'start':'end'}">${esc(f.n)}</text></g>`;
+  });
+ }
+ // vendor nodes
+ vs.forEach(v=>{const p=pos[v.id];const isOpen=open&&open.id===v.id;const shares=open&&!isOpen&&v.fps.some(g=>open.fps.some(f=>f.n===g.n));
+  const right=Math.cos(p.a)>=0; const lx=cx+(R+14)*Math.cos(p.a), ly=cy+(R+14)*Math.sin(p.a);
+  const hideLabel=open&&!isOpen&&!shares; // quiet the ring while one vendor is open
+  out+=`<g class="vnode ${isOpen?'open':''} ${shares?'shares':''}" onclick="state.mapOpen=${isOpen?'null':`'${v.id}'`};render()"><circle cx="${p.x}" cy="${p.y}" r="${isOpen?9:6}"/>${hideLabel?'':`<text x="${lx}" y="${ly+3.5}" text-anchor="${right?'start':'end'}" transform="rotate(${(p.a*180/Math.PI)+(right?0:180)} ${lx} ${ly})" style="${shares?'fill:var(--n900)':''}">${esc(v.name)}</text>`}</g>`;
+ });
+ out+=fpNodes;
+ out+=`<g class="hub"><circle cx="${cx}" cy="${cy}" r="46"/><text x="${cx}" y="${cy+4}" text-anchor="middle">Your company</text></g>`;
+ const z=state.zoom; svg.innerHTML=`<g id="vp" transform="translate(${z.x} ${z.y}) scale(${z.k})">${out}</g>`;
+ wireZoom(svg);
+}
+function applyZoom(){const g=document.getElementById('vp'); if(g){const z=state.zoom; g.setAttribute('transform',`translate(${z.x} ${z.y}) scale(${z.k})`)}}
+function zoomBy(f,cx=800,cy=600){const z=state.zoom; const k=Math.min(6,Math.max(0.5,z.k*f)); const r=k/z.k; z.x=cx-(cx-z.x)*r; z.y=cy-(cy-z.y)*r; z.k=k; applyZoom()}
+function zoomReset(){state.zoom={k:1,x:0,y:0}; applyZoom()}
+function svgPoint(svg,e){const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse())}
+function wireZoom(svg){
+ if(svg.dataset.wired)return; svg.dataset.wired='1';
+ svg.addEventListener('wheel',e=>{e.preventDefault(); const p=svgPoint(svg,e); zoomBy(e.deltaY<0?1.1:0.9,p.x,p.y)},{passive:false});
+ let drag=null;
+ svg.addEventListener('pointerdown',e=>{if(e.target.closest('.vnode,.fp'))return; drag={x:e.clientX,y:e.clientY,zx:state.zoom.x,zy:state.zoom.y}; svg.classList.add('dragging'); svg.setPointerCapture(e.pointerId)});
+ svg.addEventListener('pointermove',e=>{if(!drag)return; const ctm=svg.getScreenCTM(); state.zoom.x=drag.zx+(e.clientX-drag.x)/ctm.a; state.zoom.y=drag.zy+(e.clientY-drag.y)/ctm.d; applyZoom()});
+ const end=()=>{drag=null; svg.classList.remove('dragging')};
+ svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+}
+
+/* ---------- revisions after review ---------- */
+['twilio-sms','replicate-soc2','segment-log','atlassian-cve','lever-ai','sprinklr-iso','tableau','greenhouse-outage'].forEach(id=>{const i=THREADS.findIndex(t=>t.id===id);if(i>-1)THREADS.splice(i,1)});
+THREADS.push({id:'sendgrid-soc2',involved:true,other:true,depth:'fourth',type:'Certification lapse',found:'public',about:'SendGrid',via:['Cloudflare'],
+  date:'Aug 4',sort:'2025-08-04',subject:'SendGrid SOC 2 report period ended, no new report posted',
+  src:'Source: Twilio trust center, SendGrid section. The most recent SOC 2 Type II report covers a period ending Jun 30. Checked Aug 4, nothing newer posted.',
+  said:'No statement from Twilio or SendGrid. The trust center still shows the report covering the period ending Jun 30.',
+  sec:[['Why you’re seeing this',['SendGrid is a subprocessor of Cloudflare. Cloudflare uses it to send support ticket email, so your support ticket content passes through it.'],'Your data → Cloudflare → SendGrid'],
+       ['How this overlaps with you',['This is not an incident. It is a gap in evidence. A report covering the current period may be in progress and not yet published.']],
+       ['Where this stands as of Aug 4',['Five weeks past the end of the last audited period, with nothing new posted.']]]});
+THREADS.forEach(t=>{if(t.id==='dd-anthropic'||t.id==='gainsight-ai')t.other=true});
+Object.assign(F,{public:'Posted publicly, not announced',private:'Shared only with customers',conventional:'Announced publicly by the company'});
+const TYPE={'Subprocessor list change, no announcement':'New subprocessor added quietly','Fourth party begins using AI on data it receives':'Started using AI on data it receives','Moderate severity vulnerability, patched quietly':'Security bug fixed quietly','Unpatched vulnerability':'Security bug not yet fixed','Certification lapse':'Security certification expired'};
+const tname=t=>TYPE[t]||t;
+const ROW={
+ salesloft:{
+  0:{date:'2025-08-20',yours:'Support ticket content (config, logs, sometimes API tokens)',source:'Salesloft trust center, public post'},
+  3:{date:'2025-08-23',yours:'Support ticket content (config, logs, sometimes API tokens)',source:'Cloudflare, shared only with customers through Conveyor'},
+  6:{date:'2025-08-26',yours:'Support ticket content (config, logs, sometimes API tokens)',source:'Cloudflare, shared only with customers through Conveyor'},
+  13:{date:'2025-09-02',yours:'Support ticket content (config, logs, sometimes API tokens)',source:'Cloudflare security blog, public post'}},
+ 'dd-anthropic':{yours:'Configuration and logs',source:'Datadog subprocessor list, public page. Found by comparing to last week’s copy.'},
+ 'gainsight-ai':{yours:'Support ticket content',source:'Gainsight trust center, AI and data use page. Found by comparing to an earlier copy.'},
+ 'sendgrid-soc2':{yours:'Support ticket content',source:'Twilio trust center, SendGrid section'}
+};
+function rowOf(t){if(t.special)return ROW.salesloft[state.day];return ROW[t.id]||{}}
+function shortSrc(t){return t.src.replace(/^Source:\s*/,'').split('. ')[0].replace(/,?\s+(public|updated)?,?\s*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d+.*$/,'').replace(/\.$/,'')}
+const SUM={
+ salesloft:{
+  0:'Salesloft found a security issue in Drift, its website chat product, and cut Drift’s connection to Salesforce while it looks into it. Salesloft has not said what data was involved. You send support ticket content to Cloudflare, and Cloudflare keeps it in the Salesforce environment that Drift was connected to.',
+  3:'Cloudflare confirmed it was using the affected Drift integration in its own Salesforce environment, which is where your support tickets are held. It has turned the integration off and started an investigation. Neither company has said yet what data was involved.',
+  6:'Salesloft confirmed that between Aug 8 and Aug 18 someone used stolen credentials to pull data out of Salesforce accounts connected to Drift, including support case records. Cloudflare’s account was one of them. Support case records are where your support ticket content lives, so the data named matches what you send. Cloudflare is still working out what was taken from its account.',
+  13:'Cloudflare confirmed that support case content was taken from its own Salesforce tenant between Aug 12 and Aug 17, including the text of cases, and is notifying affected customers directly. Your support ticket content is exactly that kind of data. If any of your tickets were open in that window, they were in the set that was taken.'},
+ 'dd-anthropic':'Datadog added Anthropic to its subprocessor list without telling customers, which means Anthropic can now receive data that Datadog processes. Datadog has not said which data reaches Anthropic or what it is used for. You send configuration and logs to Datadog.',
+ 'gainsight-ai':'Gainsight updated its trust center to say that customer records, including support cases synced in from Cloudflare, may now be processed by AI models to write account summaries. Nothing was exposed. This is a change in how your support ticket content may be handled once it reaches Gainsight.',
+ 'sendgrid-soc2':'This is not an incident. SendGrid’s most recent SOC 2 report covers a period that ended Jun 30, and nothing newer has been posted. Your support ticket email still passes through SendGrid on its way from Cloudflare. There is just no current audit report covering it.'
+};
+const LINE={
+ salesloft:{0:'Salesloft found a security issue in Drift and cut its connection to Salesforce. No data named yet.',
+  3:'Cloudflare confirmed its Salesforce environment used the affected Drift integration and has turned it off. No data named yet.',
+  6:'Salesloft confirmed data was taken from Salesforce accounts connected to Drift, including support case records, which is where your support ticket content lives.',
+  13:'Cloudflare confirmed support case text was taken from its own tenant between Aug 12 and Aug 17 and is notifying affected customers directly.'},
+ 'dd-anthropic':'Datadog added Anthropic to its subprocessor list without telling customers.',
+ 'gainsight-ai':'Gainsight now says support cases synced from Cloudflare may be processed by AI models.',
+ 'sendgrid-soc2':'SendGrid’s last SOC 2 report period ended Jun 30 and nothing newer has been posted.'
+};
+function lineOf(t){if(t.special)return LINE.salesloft[state.day];return LINE[t.id]||sumOf(t)}
+function sumOf(t){if(t.special)return SUM.salesloft[state.day];if(SUM[t.id])return SUM[t.id];const first=t.said.split(/(?<=\.)\s/)[0];return first+' '+t.reason}
+
+// anything on the monitoring page selects the panel
+function openThread(id){
+ const t=THREADS.find(x=>x.id===id);
+ if(state.screen!=='monitoring'){go('monitoring')}
+ if(t.involved&&t.other)state.mtab='other';
+ state.panel=id; render(); const el=$('inc-'+id); if(el)el.scrollIntoView({block:'nearest'});
+}
+function closeSheet(){$('sheet').classList.remove('on','wide');$('scrim').classList.remove('on')}
+// moderator shortcut: "u" simulates a new update arriving
+
+/* moderator: step the timeline; each step arrives as a new alert */
+const STEPS=[[0,'Aug 20'],[3,'Aug 23'],[6,'Aug 26']];
+function modStep(d){state.day=d;state.unread.salesloft=true;state.panel=null;state.openMsgs={[d]:true};render()}
+function modReset(){state.day=0;state.unread.salesloft=true;state.panel=null;state.openMsgs={0:true};state.checkedOpen=false;render()}
+function renderMod(){const el=document.getElementById('modsteps');if(!el)return;el.innerHTML=STEPS.map(([d,l])=>`<label class="mrad"><input type="radio" name="tl" ${state.day===d?'checked':''} onchange="modStep(${d})"><span>${l}</span></label>`).join('')}
+document.addEventListener('keydown',e=>{if(e.key==='m'&&!e.metaKey&&!e.ctrlKey&&document.activeElement.tagName!=='INPUT'){document.getElementById('modbar').classList.toggle('hide')}});
+document.addEventListener('click',()=>document.querySelectorAll('.tt.open').forEach(t=>t.classList.remove('open')));
+document.addEventListener('keydown',e=>{if(e.key==='u'&&!e.metaKey&&!e.ctrlKey&&document.activeElement.tagName!=='INPUT'){state.unread.salesloft=true;state.panel=null;render()}});
+render();
+</script>
